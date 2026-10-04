@@ -129,6 +129,24 @@
             font-size: 0.85rem;
         }
 
+        .close-btn {
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
         .header {
             background: var(--primary-color);
             color: white;
@@ -302,6 +320,8 @@
                     <option value="dark" id="optDark">Oscuro</option>
                 </select>
             </div>
+            <!-- Botón Cerrar añadido -->
+            <button class="close-btn" id="btnClose" onclick="cerrarVentana()">Cerrar</button>
         </div>
     </div>
 
@@ -389,6 +409,7 @@
         es: {
             tituloPrefijo: "Conversor de",
             limpiar: "Limpiar",
+            cerrar: "Cerrar",
             resultado: "Resultado",
             categorias: [
                 "Ángulos planos", "Área", "Caudal", "Conductividad térmica", "Densidad", 
@@ -425,6 +446,7 @@
         ko: {
             tituloPrefijo: "변환기:",
             limpiar: "지우기",
+            cerrar: "닫기",
             resultado: "결과",
             categorias: [
                 "평면각", "면적", "유량", "열전도율", "밀도", 
@@ -461,6 +483,7 @@
         en: {
             tituloPrefijo: "Converter of",
             limpiar: "Clear",
+            cerrar: "Close",
             resultado: "Result",
             categorias: [
                 "Plane angles", "Area", "Flow rate", "Thermal conductivity", "Density", 
@@ -497,6 +520,7 @@
         gl: {
             tituloPrefijo: "Conversor de",
             limpiar: "Limpar",
+            cerrar: "Pechar",
             resultado: "Resultado",
             categorias: [
                 "Ángulos planos", "Área", "Caudal", "Conductividade térmica", "Densidade", 
@@ -533,6 +557,7 @@
         pt: {
             tituloPrefijo: "Conversor de",
             limpiar: "Limpar",
+            cerrar: "Fechar",
             resultado: "Resultado",
             categorias: [
                 "Ângulos planos", "Área", "Vazão", "Condutividade térmica", "Densidade", 
@@ -600,6 +625,11 @@
     let pestañaActiva = 0;
 
     function inicializar() {
+        const idiomaGuardado = localStorage.getItem('idiomaPrefijo');
+        if (idiomaGuardado && traducciones[idiomaGuardado]) {
+            idiomaActual = idiomaGuardado;
+        }
+
         poblarSelects();
         actualizarTextosInterfaz();
         obtenerTiposDeCambioReales();
@@ -659,6 +689,8 @@
 
     function cambiarIdioma(lang) {
         idiomaActual = lang;
+        localStorage.setItem('idiomaPrefijo', lang);
+
         document.querySelectorAll(".lang-btn").forEach(btn => {
             btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${lang}'`));
         });
@@ -677,6 +709,10 @@
         }
     }
 
+    function cerrarVentana() {
+        window.close();
+    }
+
     function actualizarTextosInterfaz() {
         const t = traducciones[idiomaActual];
         const botones = document.querySelectorAll(".sidebar-btn");
@@ -689,6 +725,7 @@
         });
         actualizarCabecera(pestañaActiva);
         document.getElementById("btnClear").innerText = t.limpiar;
+        document.getElementById("btnClose").innerText = t.cerrar;
         
         document.getElementById("optLight").innerText = idiomaActual === 'ko' ? '밝게' : 'Claro';
         document.getElementById("optMedium").innerText = idiomaActual === 'ko' ? '중간' : 'Medio';
