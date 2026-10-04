@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversor de unidades y divisas</title>
-    <!-- Librería oficial de iconos de banderas en SVG -->
+    <!-- Librería de iconos de banderas SVG -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.5.0/css/flag-icons.min.css">
     <style>
         :root {
@@ -20,7 +20,6 @@
             --sidebar-hover: #cbd5e1;
         }
 
-        /* Tema Medio */
         [data-theme="medium"] {
             --bg-color: #cbd5e1;
             --card-bg: #f8fafc;
@@ -32,7 +31,6 @@
             --sidebar-hover: #64748b;
         }
 
-        /* Tema Oscuro */
         [data-theme="dark"] {
             --primary-color: #3b82f6;
             --primary-hover: #2563eb;
@@ -71,7 +69,6 @@
             transition: background-color 0.3s;
         }
 
-        /* Barra superior con botones de bandera y selector de tema */
         .top-bar {
             background: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -80,6 +77,12 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.85rem;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .language-buttons {
@@ -272,12 +275,6 @@
         }
         .btn-secondary:hover { background: var(--sidebar-hover); }
 
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-        .btn-primary:hover { background: var(--primary-hover); }
-
         .currency-info {
             font-size: 0.75rem;
             color: var(--sidebar-text);
@@ -288,7 +285,6 @@
 <body>
 
 <div class="main-wrapper">
-    <!-- Barra superior: Idioma mediante botones con banderas SVG y Tema -->
     <div class="top-bar">
         <div class="language-buttons">
             <button class="lang-btn" onclick="cambiarIdioma('ko')" title="한국어"><span class="fi fi-kr"></span> KR</button>
@@ -297,23 +293,23 @@
             <button class="lang-btn" onclick="cambiarIdioma('en')" title="English"><span class="fi fi-gb"></span> GB</button>
             <button class="lang-btn" onclick="cambiarIdioma('pt')" title="Português (Brasil)"><span class="fi fi-br"></span> BR</button>
         </div>
-        <div>
-            <label for="themeSelect" id="lblTheme">🌓</label>
-            <select id="themeSelect" onchange="cambiarTema()">
-                <option value="light" selected>Claro</option>
-                <option value="medium">Medio</option>
-                <option value="dark">Oscuro</option>
-            </select>
+        <div class="top-bar-right">
+            <div>
+                <label for="themeSelect" id="lblTheme">🌓</label>
+                <select id="themeSelect" onchange="cambiarTema()">
+                    <option value="light" id="optLight" selected>Claro</option>
+                    <option value="medium" id="optMedium">Medio</option>
+                    <option value="dark" id="optDark">Oscuro</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <!-- Cabecera dinámica -->
     <div class="header" id="headerTitle">
         Conversor de ángulos planos
     </div>
 
     <div class="layout-body">
-        <!-- Menú lateral ordenado alfabéticamente (incluyendo Divisas) -->
         <div class="sidebar" id="sidebarMenu">
             <button class="sidebar-btn active" onclick="switchTab(0)">Ángulos planos</button>
             <button class="sidebar-btn" onclick="switchTab(1)">Área</button>
@@ -339,22 +335,20 @@
             <button class="sidebar-btn" onclick="switchTab(21)">Viscosidad dinámica</button>
         </div>
 
-        <!-- Área de contenido del conversor -->
         <div class="content-area">
             <div>
-                <div class="tab-content active" id="tab-0"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Ángulo</label><input type="number" id="val0" oninput="calcular(0)"><select id="selOrig0" onchange="calcular(0)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res0" readonly><select id="selDest0" onchange="calcular(0)"></select></div></div></div>
-                <div class="tab-content" id="tab-1"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Área</label><input type="number" id="val1" oninput="calcular(1)"><select id="selOrig1" onchange="calcular(1)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res1" readonly><select id="selDest1" onchange="calcular(1)"></select></div></div></div>
-                <div class="tab-content" id="tab-2"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Caudal</label><input type="number" id="val2" oninput="calcular(2)"><select id="selOrig2" onchange="calcular(2)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res2" readonly><select id="selDest2" onchange="calcular(2)"></select></div></div></div>
-                <div class="tab-content" id="tab-3"><div class="converter-grid"><div class="form-group"><label class="lbl-input">C. térmica</label><input type="number" id="val3" oninput="calcular(3)"><select id="selOrig3" onchange="calcular(3)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res3" readonly><select id="selDest3" onchange="calcular(3)"></select></div></div></div>
-                <div class="tab-content" id="tab-4"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Densidad</label><input type="number" id="val4" oninput="calcular(4)"><select id="selOrig4" onchange="calcular(4)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res4" readonly><select id="selDest4" onchange="calcular(4)"></select></div></div></div>
-                <div class="tab-content" id="tab-5"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Densidad aire</label><input type="number" id="val5" value="1.225" oninput="calcular(5)"><select id="selOrig5" onchange="calcular(5)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res5" readonly><select id="selDest5" onchange="calcular(5)"></select></div></div></div>
-                <div class="tab-content" id="tab-6"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Densidad variable</label><input type="number" id="val6" oninput="calcular(6)"><select id="selOrig6" onchange="calcular(6)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res6" readonly><select id="selDest6" onchange="calcular(6)"></select></div></div></div>
+                <div class="tab-content active" id="tab-0"><div class="converter-grid"><div class="form-group"><label id="lblInput0" class="lbl-input">Ángulos planos</label><input type="number" id="val0" oninput="calcular(0)"><select id="selOrig0" onchange="calcular(0)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res0" readonly><select id="selDest0" onchange="calcular(0)"></select></div></div></div>
+                <div class="tab-content" id="tab-1"><div class="converter-grid"><div class="form-group"><label id="lblInput1" class="lbl-input">Área</label><input type="number" id="val1" oninput="calcular(1)"><select id="selOrig1" onchange="calcular(1)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res1" readonly><select id="selDest1" onchange="calcular(1)"></select></div></div></div>
+                <div class="tab-content" id="tab-2"><div class="converter-grid"><div class="form-group"><label id="lblInput2" class="lbl-input">Caudal</label><input type="number" id="val2" oninput="calcular(2)"><select id="selOrig2" onchange="calcular(2)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res2" readonly><select id="selDest2" onchange="calcular(2)"></select></div></div></div>
+                <div class="tab-content" id="tab-3"><div class="converter-grid"><div class="form-group"><label id="lblInput3" class="lbl-input">Conductividad térmica</label><input type="number" id="val3" oninput="calcular(3)"><select id="selOrig3" onchange="calcular(3)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res3" readonly><select id="selDest3" onchange="calcular(3)"></select></div></div></div>
+                <div class="tab-content" id="tab-4"><div class="converter-grid"><div class="form-group"><label id="lblInput4" class="lbl-input">Densidad</label><input type="number" id="val4" oninput="calcular(4)"><select id="selOrig4" onchange="calcular(4)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res4" readonly><select id="selDest4" onchange="calcular(4)"></select></div></div></div>
+                <div class="tab-content" id="tab-5"><div class="converter-grid"><div class="form-group"><label id="lblInput5" class="lbl-input">Densidad aire</label><input type="number" id="val5" value="1.225" oninput="calcular(5)"><select id="selOrig5" onchange="calcular(5)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res5" readonly><select id="selDest5" onchange="calcular(5)"></select></div></div></div>
+                <div class="tab-content" id="tab-6"><div class="converter-grid"><div class="form-group"><label id="lblInput6" class="lbl-input">Densidad variable</label><input type="number" id="val6" oninput="calcular(6)"><select id="selOrig6" onchange="calcular(6)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res6" readonly><select id="selDest6" onchange="calcular(6)"></select></div></div></div>
                 
-                <!-- Pestaña de Divisas -->
                 <div class="tab-content" id="tab-7">
                     <div class="converter-grid">
                         <div class="form-group">
-                            <label class="lbl-input">Divisa</label>
+                            <label id="lblInput7" class="lbl-input">Divisas</label>
                             <input type="number" id="val7" value="1" oninput="calcular(7)">
                             <select id="selOrig7" onchange="calcular(7)"></select>
                         </div>
@@ -367,26 +361,24 @@
                     <div class="currency-info" id="currencyStatus">Cargando tipos de cambio en tiempo real...</div>
                 </div>
 
-                <div class="tab-content" id="tab-8"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Energía</label><input type="number" id="val8" oninput="calcular(8)"><select id="selOrig8" onchange="calcular(8)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res8" readonly><select id="selDest8" onchange="calcular(8)"></select></div></div></div>
-                <div class="tab-content" id="tab-9"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Entalpía</label><input type="number" id="val9" oninput="calcular(9)"><select id="selOrig9" onchange="calcular(9)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res9" readonly><select id="selDest9" onchange="calcular(9)"></select></div></div></div>
-                <div class="tab-content" id="tab-10"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Longitud</label><input type="number" id="val10" oninput="calcular(10)"><select id="selOrig10" onchange="calcular(10)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res10" readonly><select id="selDest10" onchange="calcular(10)"></select></div></div></div>
-                <div class="tab-content" id="tab-11"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Masa</label><input type="number" id="val11" oninput="calcular(11)"><select id="selOrig11" onchange="calcular(11)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res11" readonly><select id="selDest11" onchange="calcular(11)"></select></div></div></div>
-                <div class="tab-content" id="tab-12"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Memoria</label><input type="number" id="val12" oninput="calcular(12)"><select id="selOrig12" onchange="calcular(12)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res12" readonly><select id="selDest12" onchange="calcular(12)"></select></div></div></div>
-                <div class="tab-content" id="tab-13"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Peso prefijos</label><input type="number" id="val13" oninput="calcular(13)"><select id="selOrig13" onchange="calcular(13)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res13" readonly><select id="selDest13" onchange="calcular(13)"></select></div></div></div>
-                <div class="tab-content" id="tab-14"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Potencia marina</label><input type="number" id="val14" oninput="calcular(14)"><select id="selOrig14" onchange="calcular(14)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res14" readonly><select id="selDest14" onchange="calcular(14)"></select></div></div></div>
-                <div class="tab-content" id="tab-15"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Presión</label><input type="number" id="val15" oninput="calcular(15)"><select id="selOrig15" onchange="calcular(15)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res15" readonly><select id="selDest15" onchange="calcular(15)"></select></div></div></div>
-                <div class="tab-content" id="tab-16"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Psicrometría</label><input type="number" id="val16" oninput="calcular(16)"><select id="selOrig16" onchange="calcular(16)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res16" readonly><select id="selDest16" onchange="calcular(16)"></select></div></div></div>
-                <div class="tab-content" id="tab-17"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Temperatura</label><input type="number" id="val17" oninput="calcular(17)"><select id="selOrig17" onchange="calcular(17)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res17" readonly><select id="selDest17" onchange="calcular(17)"></select></div></div></div>
-                <div class="tab-content" id="tab-18"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Tiempo</label><input type="number" id="val18" oninput="calcular(18)"><select id="selOrig18" onchange="calcular(18)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res18" readonly><select id="selDest18" onchange="calcular(18)"></select></div></div></div>
-                <div class="tab-content" id="tab-19"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Velocidad</label><input type="number" id="val19" oninput="calcular(19)"><select id="selOrig19" onchange="calcular(19)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res19" readonly><select id="selDest19" onchange="calcular(19)"></select></div></div></div>
-                <div class="tab-content" id="tab-20"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Visc. cinemática</label><input type="number" id="val20" oninput="calcular(20)"><select id="selOrig20" onchange="calcular(20)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res20" readonly><select id="selDest20" onchange="calcular(20)"></select></div></div></div>
-                <div class="tab-content" id="tab-21"><div class="converter-grid"><div class="form-group"><label class="lbl-input">Visc. dinámica</label><input type="number" id="val21" oninput="calcular(21)"><select id="selOrig21" onchange="calcular(21)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res21" readonly><select id="selDest21" onchange="calcular(21)"></select></div></div></div>
+                <div class="tab-content" id="tab-8"><div class="converter-grid"><div class="form-group"><label id="lblInput8" class="lbl-input">Energía</label><input type="number" id="val8" oninput="calcular(8)"><select id="selOrig8" onchange="calcular(8)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res8" readonly><select id="selDest8" onchange="calcular(8)"></select></div></div></div>
+                <div class="tab-content" id="tab-9"><div class="converter-grid"><div class="form-group"><label id="lblInput9" class="lbl-input">Entalpía</label><input type="number" id="val9" oninput="calcular(9)"><select id="selOrig9" onchange="calcular(9)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res9" readonly><select id="selDest9" onchange="calcular(9)"></select></div></div></div>
+                <div class="tab-content" id="tab-10"><div class="converter-grid"><div class="form-group"><label id="lblInput10" class="lbl-input">Longitud</label><input type="number" id="val10" oninput="calcular(10)"><select id="selOrig10" onchange="calcular(10)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res10" readonly><select id="selDest10" onchange="calcular(10)"></select></div></div></div>
+                <div class="tab-content" id="tab-11"><div class="converter-grid"><div class="form-group"><label id="lblInput11" class="lbl-input">Masa</label><input type="number" id="val11" oninput="calcular(11)"><select id="selOrig11" onchange="calcular(11)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res11" readonly><select id="selDest11" onchange="calcular(11)"></select></div></div></div>
+                <div class="tab-content" id="tab-12"><div class="converter-grid"><div class="form-group"><label id="lblInput12" class="lbl-input">Memoria informática</label><input type="number" id="val12" oninput="calcular(12)"><select id="selOrig12" onchange="calcular(12)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res12" readonly><select id="selDest12" onchange="calcular(12)"></select></div></div></div>
+                <div class="tab-content" id="tab-13"><div class="converter-grid"><div class="form-group"><label id="lblInput13" class="lbl-input">Peso prefijos</label><input type="number" id="val13" oninput="calcular(13)"><select id="selOrig13" onchange="calcular(13)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res13" readonly><select id="selDest13" onchange="calcular(13)"></select></div></div></div>
+                <div class="tab-content" id="tab-14"><div class="converter-grid"><div class="form-group"><label id="lblInput14" class="lbl-input">Potencia marina</label><input type="number" id="val14" oninput="calcular(14)"><select id="selOrig14" onchange="calcular(14)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res14" readonly><select id="selDest14" onchange="calcular(14)"></select></div></div></div>
+                <div class="tab-content" id="tab-15"><div class="converter-grid"><div class="form-group"><label id="lblInput15" class="lbl-input">Presión</label><input type="number" id="val15" oninput="calcular(15)"><select id="selOrig15" onchange="calcular(15)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res15" readonly><select id="selDest15" onchange="calcular(15)"></select></div></div></div>
+                <div class="tab-content" id="tab-16"><div class="converter-grid"><div class="form-group"><label id="lblInput16" class="lbl-input">Psicrometría y aire</label><input type="number" id="val16" oninput="calcular(16)"><select id="selOrig16" onchange="calcular(16)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res16" readonly><select id="selDest16" onchange="calcular(16)"></select></div></div></div>
+                <div class="tab-content" id="tab-17"><div class="converter-grid"><div class="form-group"><label id="lblInput17" class="lbl-input">Temperatura</label><input type="number" id="val17" oninput="calcular(17)"><select id="selOrig17" onchange="calcular(17)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res17" readonly><select id="selDest17" onchange="calcular(17)"></select></div></div></div>
+                <div class="tab-content" id="tab-18"><div class="converter-grid"><div class="form-group"><label id="lblInput18" class="lbl-input">Tiempo</label><input type="number" id="val18" oninput="calcular(18)"><select id="selOrig18" onchange="calcular(18)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res18" readonly><select id="selDest18" onchange="calcular(18)"></select></div></div></div>
+                <div class="tab-content" id="tab-19"><div class="converter-grid"><div class="form-group"><label id="lblInput19" class="lbl-input">Velocidad</label><input type="number" id="val19" oninput="calcular(19)"><select id="selOrig19" onchange="calcular(19)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res19" readonly><select id="selDest19" onchange="calcular(19)"></select></div></div></div>
+                <div class="tab-content" id="tab-20"><div class="converter-grid"><div class="form-group"><label id="lblInput20" class="lbl-input">Viscosidad cinemática</label><input type="number" id="val20" oninput="calcular(20)"><select id="selOrig20" onchange="calcular(20)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res20" readonly><select id="selDest20" onchange="calcular(20)"></select></div></div></div>
+                <div class="tab-content" id="tab-21"><div class="converter-grid"><div class="form-group"><label id="lblInput21" class="lbl-input">Viscosidad dinámica</label><input type="number" id="val21" oninput="calcular(21)"><select id="selOrig21" onchange="calcular(21)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res21" readonly><select id="selDest21" onchange="calcular(21)"></select></div></div></div>
             </div>
 
-            <!-- Botones de acción inferiores -->
             <div class="footer-actions">
                 <button class="btn btn-secondary" onclick="limpiar()" id="btnClear">Limpiar</button>
-                <button class="btn btn-primary" onclick="window.close()" id="btnClose">Cerrar</button>
             </div>
         </div>
     </div>
@@ -397,7 +389,6 @@
         es: {
             tituloPrefijo: "Conversor de",
             limpiar: "Limpiar",
-            cerrar: "Cerrar",
             resultado: "Resultado",
             categorias: [
                 "Ángulos planos", "Área", "Caudal", "Conductividad térmica", "Densidad", 
@@ -405,38 +396,35 @@
                 "Masa", "Memoria informática", "Peso prefijos", "Potencia marina", "Presión", 
                 "Psicrometría y aire", "Temperatura", "Tiempo", "Velocidad", 
                 "Viscosidad cinemática", "Viscosidad dinámica"
-            ]
-        },
-        en: {
-            tituloPrefijo: "Converter of",
-            limpiar: "Clear",
-            cerrar: "Close",
-            resultado: "Result",
-            categorias: [
-                "Plane angles", "Area", "Flow rate", "Thermal conductivity", "Density", 
-                "Air density", "Variable density", "Currencies", "Energy", "Enthalpy", "Length", 
-                "Mass", "Computer memory", "Weight prefixes", "Marine power", "Pressure", 
-                "Psychrometry and air", "Temperature", "Time", "Velocity", 
-                "Kinematic viscosity", "Dynamic viscosity"
-            ]
-        },
-        gl: {
-            tituloPrefijo: "Conversor de",
-            limpiar: "Limpar",
-            cerrar: "Pechar",
-            resultado: "Resultado",
-            categorias: [
-                "Ángulos planos", "Área", "Caudal", "Conductividade térmica", "Densidade", 
-                "Densidade aire", "Densidade variable", "Divisas", "Enerxía", "Entalpía", "Lonxitude", 
-                "Masa", "Memoria informática", "Peso prefixos", "Potencia mariña", "Presión", 
-                "Psicrometría e aire", "Temperatura", "Tempo", "Velocidade", 
-                "Viscosidade cinemática", "Viscosidade dinámica"
+            ],
+            unidades: [
+                ["grado sexagesimal", "radián", "gon", "minuto de arco", "segundo de arco"],
+                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectárea"],
+                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
+                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
+                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
+                ["kg/m³", "lb/ft³", "g/L"],
+                ["kg/m³", "g/cm³", "lb/ft³"],
+                ["USD - Dólar USA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen japonés", "CHF - Franco suizo", "CAD - Dólar canadiense", "AUD - Dólar australiano", "BRL - Real brasileño", "MXN - Peso mexicano"],
+                ["julio (J)", "kJ", "kWh", "kcal", "BTU"],
+                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
+                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
+                ["mg", "g", "kg", "t", "tonelada larga", "tonelada corta", "lb", "oz"],
+                ["Bytes", "KB", "MB", "GB", "TB"],
+                ["kg", "g", "mg", "µg"],
+                ["W", "kW", "BHP", "SHP", "CV/PS"],
+                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
+                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
+                ["°C", "K", "°F", "°Ra"],
+                ["s", "min", "h", "d"],
+                ["m/s", "nudos", "m/min", "km/h", "ft/s", "fpm", "mph"],
+                ["cSt", "St", "m²/s"],
+                ["cP", "Pa·s", "P"]
             ]
         },
         ko: {
             tituloPrefijo: "변환기:",
             limpiar: "지우기",
-            cerrar: "닫기",
             resultado: "결과",
             categorias: [
                 "평면각", "면적", "유량", "열전도율", "밀도", 
@@ -444,12 +432,107 @@
                 "질량", "컴퓨터 메모리", "무게 접두사", "해양 동력", "압력", 
                 "습공기", "온도", "시간", "속도", 
                 "동점성계수", "점성계수"
+            ],
+            unidades: [
+                ["도 (degree)", "라디안 (radian)", "그라디안 (gon)", "각분 (arcmin)", "각초 (arcsec)"],
+                ["제곱밀리미터 (mm²)", "제곱센티미터 (cm²)", "제곱데시미터 (dm²)", "제곱미터 (m²)", "제곱인치 (in²)", "제곱피트 (ft²)", "제곱야드 (yd²)", "에이커 (ac)", "헥타르 (ha)"],
+                ["세제곱미터/시간 (m³/h)", "세제곱미터/초 (m³/s)", "리터/초 (L/s)", "리터/분 (L/min)", "세제곱피트/분 (cfm)", "갤런/분 (gpm)"],
+                ["와트/미터·켈빈 (W/(m·K))", "BTU/(시간·피트·°F)", "kcal/(시간·미터·°C)"],
+                ["킬로그램/세제곱미터 (kg/m³)", "그램/세제곱센티미터 (g/cm³)", "파운드/세제곱피트 (lb/ft³)", "파운드/세제곱인치 (lb/in³)"],
+                ["킬로그램/세제곱미터 (kg/m³)", "파운드/세제곱피트 (lb/ft³)", "그램/리터 (g/L)"],
+                ["킬로그램/세제곱미터 (kg/m³)", "그램/세제곱센티미터 (g/cm³)", "파운드/세제곱피트 (lb/ft³)"],
+                ["USD - 미국 달러", "EUR - 유로", "GBP - 영국 파운드", "JPY - 일본 엔", "CHF - 스위스 프랑", "CAD - 캐나다 달러", "AUD - 호주 달러", "BRL - 브라질 레알", "MXN - 멕시코 페소"],
+                ["줄 (J)", "킬로줄 (kJ)", "킬로와트시 (kWh)", "킬로칼로리 (kcal)", "BTU"],
+                ["킬로줄/킬로그램 (kJ/kg)", "줄/그램 (J/g)", "킬로칼로리/킬로그램 (kcal/kg)", "BTU/파운드 (BTU/lb)"],
+                ["밀리미터 (mm)", "센티미터 (cm)", "데시미터 (dm)", "미터 (m)", "킬로미터 (km)", "인치 (in)", "피트 (ft)", "야드 (yd)", "마일 (mi)"],
+                ["밀리그램 (mg)", "그램 (g)", "킬로그램 (kg)", "톤 (t)", "롱톤 (long ton)", "숏톤 (short ton)", "파운드 (lb)", "온스 (oz)"],
+                ["바이트 (Bytes)", "킬로바이트 (KB)", "메가바이트 (MB)", "기가바이트 (GB)", "테라바이트 (TB)"],
+                ["킬로그램 (kg)", "그램 (g)", "밀리그램 (mg)", "마이크로그램 (µg)"],
+                ["와트 (W)", "킬로와트 (kW)", "브레이크 마력 (BHP)", "축 마력 (SHP)", "독일 마력 (PS/CV)"],
+                ["파스칼 (Pa)", "킬로파스칼 (kPa)", "바 (bar)", "psi", "기압 (atm)", "수은주 밀리미터 (mmHg)", "수주 인치 (in.w.g.)"],
+                ["수증기량/건공기 (g_v/kg_a)", "엔탈피 (kJ/kg_a)", "비체적 (m³/kg_a)"],
+                ["섭씨 (°C)", "켈빈 (K)", "화씨 (°F)", "랭킨 (°Ra)"],
+                ["초 (s)", "분 (min)", "시간 (h)", "일 (d)"],
+                ["미터/초 (m/s)", "노트 (knots)", "미터/분 (m/min)", "킬로미터/시간 (km/h)", "피트/초 (ft/s)", "피트/분 (fpm)", "마일/시간 (mph)"],
+                ["센티스토크 (cSt)", "스토크 (St)", "제곱미터/초 (m²/s)"],
+                ["센티푸아즈 (cP)", "파스칼초 (Pa·s)", "푸아즈 (P)"]
+            ]
+        },
+        en: {
+            tituloPrefijo: "Converter of",
+            limpiar: "Clear",
+            resultado: "Result",
+            categorias: [
+                "Plane angles", "Area", "Flow rate", "Thermal conductivity", "Density", 
+                "Air density", "Variable density", "Currencies", "Energy", "Enthalpy", "Length", 
+                "Mass", "Computer memory", "Weight prefixes", "Marine power", "Pressure", 
+                "Psychrometry and air", "Temperature", "Time", "Velocity", 
+                "Kinematic viscosity", "Dynamic viscosity"
+            ],
+            unidades: [
+                ["degree", "radian", "gon", "arcmin", "arcsec"],
+                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectare"],
+                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
+                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
+                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
+                ["kg/m³", "lb/ft³", "g/L"],
+                ["kg/m³", "g/cm³", "lb/ft³"],
+                ["USD - US Dollar", "EUR - Euro", "GBP - British Pound", "JPY - Japanese Yen", "CHF - Swiss Franc", "CAD - Canadian Dollar", "AUD - Australian Dollar", "BRL - Brazilian Real", "MXN - Mexican Peso"],
+                ["joule (J)", "kJ", "kWh", "kcal", "BTU"],
+                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
+                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
+                ["mg", "g", "kg", "t", "long ton", "short ton", "lb", "oz"],
+                ["Bytes", "KB", "MB", "GB", "TB"],
+                ["kg", "g", "mg", "µg"],
+                ["W", "kW", "BHP", "SHP", "CV/PS"],
+                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
+                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
+                ["°C", "K", "°F", "°Ra"],
+                ["s", "min", "h", "d"],
+                ["m/s", "knots", "m/min", "km/h", "ft/s", "fpm", "mph"],
+                ["cSt", "St", "m²/s"],
+                ["cP", "Pa·s", "P"]
+            ]
+        },
+        gl: {
+            tituloPrefijo: "Conversor de",
+            limpiar: "Limpar",
+            resultado: "Resultado",
+            categorias: [
+                "Ángulos planos", "Área", "Caudal", "Conductividade térmica", "Densidade", 
+                "Densidade aire", "Densidade variable", "Divisas", "Enerxía", "Entalpía", "Lonxitude", 
+                "Masa", "Memoria informática", "Peso prefixos", "Potencia mariña", "Presión", 
+                "Psicrometría e aire", "Temperatura", "Tempo", "Velocidade", 
+                "Viscosidade cinemática", "Viscosidade dinámica"
+            ],
+            unidades: [
+                ["grao sexaxesimal", "radián", "gon", "minuto de arco", "segundo de arco"],
+                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectárea"],
+                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
+                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
+                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
+                ["kg/m³", "lb/ft³", "g/L"],
+                ["kg/m³", "g/cm³", "lb/ft³"],
+                ["USD - Dólar USA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen xaponés", "CHF - Franco suízo", "CAD - Dólar canadense", "AUD - Dólar australiano", "BRL - Real brasileiro", "MXN - Peso mexicano"],
+                ["xulio (J)", "kJ", "kWh", "kcal", "BTU"],
+                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
+                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
+                ["mg", "g", "kg", "t", "tonelada longa", "tonelada curta", "lb", "oz"],
+                ["Bytes", "KB", "MB", "GB", "TB"],
+                ["kg", "g", "mg", "µg"],
+                ["W", "kW", "BHP", "SHP", "CV/PS"],
+                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
+                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
+                ["°C", "K", "°F", "°Ra"],
+                ["s", "min", "h", "d"],
+                ["m/s", "nudos", "m/min", "km/h", "ft/s", "fpm", "mph"],
+                ["cSt", "St", "m²/s"],
+                ["cP", "Pa·s", "P"]
             ]
         },
         pt: {
             tituloPrefijo: "Conversor de",
             limpiar: "Limpar",
-            cerrar: "Fechar",
             resultado: "Resultado",
             categorias: [
                 "Ângulos planos", "Área", "Vazão", "Condutividade térmica", "Densidade", 
@@ -457,63 +540,105 @@
                 "Massa", "Memória de computador", "Prefixos de peso", "Potência marítima", "Pressão", 
                 "Psicrometria e ar", "Temperatura", "Tempo", "Velocidade", 
                 "Viscosidade cinemática", "Viscosidade dinâmica"
+            ],
+            unidades: [
+                ["grau sexagesimal", "radiano", "gon", "minuto de arco", "segundo de arco"],
+                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectare"],
+                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
+                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
+                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
+                ["kg/m³", "lb/ft³", "g/L"],
+                ["kg/m³", "g/cm³", "lb/ft³"],
+                ["USD - Dólar dos EUA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Iene japonês", "CHF - Franco suíço", "CAD - Dólar canadense", "AUD - Dólar australiano", "BRL - Real brasileiro", "MXN - Peso mexicano"],
+                ["joule (J)", "kJ", "kWh", "kcal", "BTU"],
+                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
+                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
+                ["mg", "g", "kg", "t", "tonelada longa", "tonelada curta", "lb", "oz"],
+                ["Bytes", "KB", "MB", "GB", "TB"],
+                ["kg", "g", "mg", "µg"],
+                ["W", "kW", "BHP", "SHP", "CV/PS"],
+                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
+                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
+                ["°C", "K", "°F", "°Ra"],
+                ["s", "min", "h", "d"],
+                ["m/s", "nós", "m/min", "km/h", "ft/s", "fpm", "mph"],
+                ["cSt", "St", "m²/s"],
+                ["cP", "Pa·s", "P"]
             ]
         }
     };
 
     let idiomaActual = "es";
 
-    const datosUnidades = [
-        { unidades: ["grado sexagesimal", "radián", "gradián (gon)", "minuto de arco", "segundo de arco"], factores: [1, 57.2957795, 0.9, 0.01666667, 0.000277778] },
-        { unidades: ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "ac", "ha"], factores: [0.000001, 0.0001, 0.01, 1, 0.00064516, 0.092903, 0.836127, 4046.86, 10000] },
-        { unidades: ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"], factores: [1, 3600, 3.6, 0.06, 1.69901, 0.227125] },
-        { unidades: ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"], factores: [1, 1.730735, 1.16222] },
-        { unidades: ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"], factores: [1, 1000, 16.01846, 27679.9] },
-        { unidades: ["kg/m³", "lb/ft³", "g/L"], factores: [1, 16.01846, 1] },
-        { unidades: ["kg/m³", "g/cm³", "lb/ft³"], factores: [1, 1000, 16.01846] },
-        // Divisas (índice 7)
-        { unidades: ["USD - Dólar estadounidense", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen japonés", "CHF - Franco suizo", "CAD - Dólar canadiense", "AUD - Dólar australiano", "BRL - Real brasileño", "MXN - Peso mexicano"], codigos: ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "BRL", "MXN"], factores: [1, 0.92, 0.79, 155, 0.90, 1.37, 1.52, 5.20, 17.0] },
-        { unidades: ["Julio (J)", "kJ", "kWh", "kcal", "BTU"], factores: [1, 1000, 3600000, 4186.8, 1055.06] },
-        { unidades: ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"], factores: [1, 1, 4.1868, 2.326] },
-        { unidades: ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"], factores: [0.001, 0.01, 0.1, 1, 1000, 0.0254, 0.3048, 0.9144, 1609.34] },
-        { unidades: ["mg", "g", "kg", "t", "long ton", "short ton", "lb", "oz"], factores: [0.000001, 0.001, 1, 1000, 1016.05, 907.185, 0.453592, 0.0283495] },
-        { unidades: ["Bytes (B)", "KB", "MB", "GB", "TB"], factores: [1, 1024, 1048576, 1073741824, 1099511627776] },
-        { unidades: ["kg", "g", "mg", "µg"], factores: [1, 0.001, 0.000001, 0.000000001] },
-        { unidades: ["W", "kW", "BHP", "SHP", "CV/PS"], factores: [1, 1000, 745.7, 745.7, 735.5] },
-        { unidades: ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."], factores: [1, 1000, 100000, 6894.76, 101325, 133.322, 248.84] },
-        { unidades: ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"], factores: [1, 1, 1] },
-        { unidades: ["°C", "K", "°F", "°Ra"], factores: [] },
-        { unidades: ["s", "min", "h", "d"], factores: [1, 60, 3600, 86400] },
-        { unidades: ["m/s", "nudos / knots", "m/min", "km/h", "ft/s", "fpm", "mph"], factores: [1, 0.514444, 0.0166667, 0.277778, 0.3048, 0.00508, 0.44704] },
-        { unidades: ["cSt", "St", "m²/s"], factores: [1, 100, 1000000] },
-        { unidades: ["cP", "Pa·s", "P"], factores: [1, 1000, 100] }
+    const factoresComunes = [
+        [1, 57.2957795, 0.9, 0.01666667, 0.000277778],
+        [0.000001, 0.0001, 0.01, 1, 0.00064516, 0.092903, 0.836127, 4046.86, 10000],
+        [1, 3600, 3.6, 0.06, 1.69901, 0.227125],
+        [1, 1.730735, 1.16222],
+        [1, 1000, 16.01846, 27679.9],
+        [1, 16.01846, 1],
+        [1, 1000, 16.01846],
+        [1, 0.92, 0.79, 155, 0.90, 1.37, 1.52, 5.20, 17.0],
+        [1, 1000, 3600000, 4186.8, 1055.06],
+        [1, 1, 4.1868, 2.326],
+        [0.001, 0.01, 0.1, 1, 1000, 0.0254, 0.3048, 0.9144, 1609.34],
+        [0.000001, 0.001, 1, 1000, 1016.05, 907.185, 0.453592, 0.0283495],
+        [1, 1024, 1048576, 1073741824, 1099511627776],
+        [1, 0.001, 0.000001, 0.000000001],
+        [1, 1000, 745.7, 745.7, 735.5],
+        [1, 1000, 100000, 6894.76, 101325, 133.322, 248.84],
+        [1, 1, 1],
+        [],
+        [1, 60, 3600, 86400],
+        [1, 0.514444, 0.0166667, 0.277778, 0.3048, 0.00508, 0.44704],
+        [1, 100, 1000000],
+        [1, 1000, 100]
     ];
+
+    const codigosDivisas = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "BRL", "MXN"];
 
     let pestañaActiva = 0;
 
     function inicializar() {
-        datosUnidades.forEach((cat, index) => {
-            const selOrig = document.getElementById(`selOrig${index}`);
-            const selDest = document.getElementById(`selDest${index}`);
-            if (!selOrig || !selDest) return;
-
-            cat.unidades.forEach((uni, idx) => {
-                selOrig.add(new Option(uni, idx));
-                selDest.add(new Option(uni, idx));
-            });
-
-            if (index === 7) {
-                // Forzar por defecto USD en origen y EUR en destino para Divisas
-                selOrig.selectedIndex = 0; // USD
-                selDest.selectedIndex = 1; // EUR
-            } else {
-                if (selDest.options.length > 1) selDest.selectedIndex = 1;
-            }
-        });
+        poblarSelects();
         actualizarTextosInterfaz();
         obtenerTiposDeCambioReales();
         calcular(5);
         calcular(7);
+    }
+
+    function poblarSelects() {
+        const t = traducciones[idiomaActual];
+        t.unidades.forEach((catUnidades, index) => {
+            const selOrig = document.getElementById(`selOrig${index}`);
+            const selDest = document.getElementById(`selDest${index}`);
+            if (!selOrig || !selDest) return;
+
+            const valOrigPrev = selOrig.value;
+            const valDestPrev = selDest.value;
+
+            selOrig.innerHTML = "";
+            selDest.innerHTML = "";
+
+            catUnidades.forEach((uni, idx) => {
+                selOrig.add(new Option(uni, idx));
+                selDest.add(new Option(uni, idx));
+            });
+
+            if (valOrigPrev !== "" && valOrigPrev < catUnidades.length) {
+                selOrig.selectedIndex = valOrigPrev;
+            } else if (index === 7) {
+                selOrig.selectedIndex = 0;
+            }
+
+            if (valDestPrev !== "" && valDestPrev < catUnidades.length) {
+                selDest.selectedIndex = valDestPrev;
+            } else if (index === 7) {
+                selDest.selectedIndex = 1;
+            } else {
+                if (selDest.options.length > 1) selDest.selectedIndex = 1;
+            }
+        });
     }
 
     async function obtenerTiposDeCambioReales() {
@@ -521,13 +646,14 @@
             const response = await fetch('https://open.er-api.com/v6/latest/USD');
             const data = await response.json();
             if (data && data.rates) {
-                const codigos = datosUnidades[7].codigos;
-                datosUnidades[7].factores = codigos.map(code => 1 / data.rates[code]);
-                document.getElementById("currencyStatus").innerText = "Tipos de cambio actualizados en tiempo real (" + data.time_last_update_utc.substring(0, 16) + ")";
+                factoresComunes[7] = codigosDivisas.map(code => 1 / data.rates[code]);
+                const msg = idiomaActual === 'ko' ? "실시간 환율 업데이트 완료 (" : "Tipos de cambio actualizados en tiempo real (";
+                document.getElementById("currencyStatus").innerText = msg + data.time_last_update_utc.substring(0, 16) + ")";
                 calcular(7);
             }
         } catch (error) {
-            document.getElementById("currencyStatus").innerText = "Aviso: Usando valores predeterminados por fallo de red al consultar tipos de cambio.";
+            const msg = idiomaActual === 'ko' ? "알림: 네트워크 오류로 인해 기본 환율을 사용합니다." : "Aviso: Usando valores de cambio predeterminados por error de red.";
+            document.getElementById("currencyStatus").innerText = msg;
         }
     }
 
@@ -536,7 +662,10 @@
         document.querySelectorAll(".lang-btn").forEach(btn => {
             btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${lang}'`));
         });
+
+        poblarSelects();
         actualizarTextosInterfaz();
+        calcular(pestañaActiva);
     }
 
     function cambiarTema() {
@@ -553,16 +682,26 @@
         const botones = document.querySelectorAll(".sidebar-btn");
         botones.forEach((btn, idx) => {
             btn.innerText = t.categorias[idx];
+            const lblInput = document.getElementById(`lblInput${idx}`);
+            if (lblInput) {
+                lblInput.innerText = t.categorias[idx];
+            }
         });
         actualizarCabecera(pestañaActiva);
         document.getElementById("btnClear").innerText = t.limpiar;
-        document.getElementById("btnClose").innerText = t.cerrar;
-        document.querySelectorAll(".lbl-res").forEach(el => el.innerText = t.resultado);
+        
+        document.getElementById("optLight").innerText = idiomaActual === 'ko' ? '밝게' : 'Claro';
+        document.getElementById("optMedium").innerText = idiomaActual === 'ko' ? '중간' : 'Medio';
+        document.getElementById("optDark").innerText = idiomaActual === 'ko' ? '어둡게' : (idiomaActual === 'pt' ? 'Escuro' : (idiomaActual === 'gl' ? 'Escuro' : 'Oscuro'));
     }
 
     function actualizarCabecera(index) {
         const t = traducciones[idiomaActual];
-        document.getElementById("headerTitle").innerText = `${t.tituloPrefijo} ${t.categorias[index].toLowerCase()}`;
+        if (idiomaActual === 'ko') {
+            document.getElementById("headerTitle").innerText = `${t.categorias[index]} ${t.tituloPrefijo}`;
+        } else {
+            document.getElementById("headerTitle").innerText = `${t.tituloPrefijo} ${t.categorias[index].toLowerCase()}`;
+        }
     }
 
     function switchTab(index) {
@@ -588,7 +727,7 @@
         const destino = parseInt(destSelect.value);
         let resultado = 0;
 
-        if (catIndex === 17) { // Temperatura
+        if (catIndex === 17) {
             let enC = val;
             if (origen === 1) enC = val - 273.15;
             else if (origen === 2) enC = (val - 32) * 5 / 9;
@@ -599,7 +738,7 @@
             else if (destino === 2) resultado = (enC * 9 / 5) + 32;
             else if (destino === 3) resultado = (enC + 273.15) * 9 / 5;
         } else {
-            const factores = datosUnidades[catIndex].factores;
+            const factores = factoresComunes[catIndex];
             const enBase = val * factores[origen];
             resultado = enBase / factores[destino];
         }
