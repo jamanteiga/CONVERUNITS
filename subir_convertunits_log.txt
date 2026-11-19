@@ -1,0 +1,9 @@
+===== 19/11/2026 23:34:41,58 ===== 
+Preparando todos los ficheros de C:\Users\jaman\Documents\PROYECTOS\CONVERUNITS... 
+warning: in the working copy of 'index.html', LF will be replaced by CRLF the next time Git touches it
+No hay cambios nuevos respecto al ultimo commit local. 
+Subiendo todo a GitHub (esta copia local manda: sobrescribe lo que hubiera en GitHub)... 
+remote: Repository not found.
+fatal: repository 'https://github.com/jamanteiga/CONVERTUNITS.git/' not found
+ERROR al subir a GitHub (git push). Puede que haga falta iniciar sesion una vez a mano. 
+===== Fin: 19/11/2026 23:34:42,77 ===== 

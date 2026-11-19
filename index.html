@@ -2,8 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Conversor de unidades y divisas</title>
+    <meta name="theme-color" content="#1e3a8a" id="metaTheme">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Conversor">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
     <!-- Librería de iconos de banderas SVG -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.5.0/css/flag-icons.min.css">
     <style>
@@ -44,6 +52,14 @@
             --sidebar-hover: #334155;
         }
 
+        * { box-sizing: border-box; }
+
+        html {
+            background-color: var(--bg-color);
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
@@ -55,6 +71,8 @@
             align-items: flex-start;
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .main-wrapper {
@@ -69,6 +87,8 @@
             transition: background-color 0.3s;
         }
 
+        .safe-top { display: none; background: var(--primary-color); }
+
         .top-bar {
             background: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -76,6 +96,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
             font-size: 0.85rem;
         }
 
@@ -87,6 +109,7 @@
 
         .language-buttons {
             display: flex;
+            flex-wrap: wrap;
             gap: 6px;
         }
 
@@ -103,11 +126,10 @@
             align-items: center;
             gap: 5px;
             transition: all 0.2s;
+            font-family: inherit;
         }
 
-        .lang-btn:hover {
-            background: var(--sidebar-hover);
-        }
+        .lang-btn:hover { background: var(--sidebar-hover); }
 
         .lang-btn.active {
             border-color: var(--primary-color);
@@ -139,6 +161,7 @@
             font-weight: 600;
             color: var(--text-color);
             transition: all 0.2s;
+            font-family: inherit;
         }
 
         .close-btn:hover {
@@ -156,6 +179,11 @@
             font-weight: bold;
         }
 
+        .cat-select-wrap {
+            display: none;
+            padding: 12px 16px 0;
+        }
+
         .layout-body {
             display: flex;
             min-height: 480px;
@@ -166,7 +194,7 @@
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             overflow-y: auto;
-            max-height: 520px;
+            max-height: 600px;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
@@ -187,7 +215,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-family: inherit;
         }
+
+        .sidebar-btn.sub { padding-left: 28px; font-weight: 500; }
 
         .sidebar-btn:hover {
             background: var(--sidebar-hover);
@@ -202,19 +233,15 @@
 
         .content-area {
             flex: 1;
+            min-width: 0;
             padding: 25px 30px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .converter-grid {
             display: grid;
@@ -223,39 +250,26 @@
             align-items: center;
         }
 
-        @media (max-width: 768px) {
-            .layout-body {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                max-height: 180px;
-            }
-            .converter-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
+            min-width: 0;
         }
 
-        label {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
+        label { font-weight: 600; font-size: 0.9rem; }
 
         input, select {
             padding: 10px 12px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 0.95rem;
+            font-family: inherit;
             outline: none;
             background: var(--card-bg);
             color: var(--text-color);
             transition: border-color 0.2s;
+            min-width: 0;
         }
 
         input:focus, select:focus {
@@ -284,13 +298,11 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 0.9rem;
+            font-family: inherit;
             transition: background 0.2s;
         }
 
-        .btn-secondary {
-            background: var(--sidebar-bg);
-            color: var(--text-color);
-        }
+        .btn-secondary { background: var(--sidebar-bg); color: var(--text-color); }
         .btn-secondary:hover { background: var(--sidebar-hover); }
 
         .currency-info {
@@ -298,498 +310,718 @@
             color: var(--sidebar-text);
             margin-top: 10px;
         }
+
+        /* Todas las unidades */
+        details.all { margin-top: 22px; border: 1px solid var(--border-color); border-radius: 8px; }
+        details.all summary { padding: 10px 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: var(--sidebar-text); }
+        .all-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0 18px; padding: 4px 14px 12px; }
+        .all-item { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.82rem; }
+        .all-item .n { color: var(--sidebar-text); }
+        .all-item .v { font-weight: 700; text-align: right; word-break: break-all; }
+
+        /* Pulgadas / pies */
+        fieldset.adjust { border: 1px solid var(--border-color); border-radius: 8px; margin: 0 0 18px; padding: 6px 12px 10px; }
+        fieldset.adjust legend { font-weight: 700; font-size: 0.85rem; padding: 0 6px; }
+        .radios { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+        .radios label { font-weight: 500; font-size: 0.88rem; display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 4px 0; }
+        .radios input[type=radio] { padding: 0; width: 18px; height: 18px; accent-color: var(--primary-color); }
+        .imp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .box { border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 16px 16px; background: var(--readonly-bg); }
+        .box h3 { margin: 0 0 12px; text-align: center; font-size: 1.05rem; }
+        .imp-fields { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+        .imp-fields .fg { display: flex; flex-direction: column; gap: 6px; flex: 1 1 70px; min-width: 0; }
+        .frac { display: flex; flex-direction: column; align-items: stretch; gap: 3px; }
+        .frac .bar { height: 2px; background: var(--text-color); opacity: .55; }
+        .frac input { text-align: center; }
+        .nav { display: flex; gap: 10px; margin-top: 14px; }
+        .nav .btn { flex: 1; padding: 10px 8px; }
+        .out-units { margin-top: 12px; }
+        .note { margin-top: 14px; font-size: 0.8rem; color: var(--sidebar-text); line-height: 1.5; }
+
+        /* Zapatos */
+        .shoe-wrap { overflow-x: auto; }
+        table.shoes { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: center; }
+        table.shoes th, table.shoes td { border: 1px solid var(--border-color); padding: 8px 6px; }
+        table.shoes thead th { background: var(--primary-color); color: #fff; font-size: 0.8rem; }
+        table.shoes tbody th { font-size: 1rem; color: var(--primary-color); background: var(--readonly-bg); }
+        table.shoes tbody tr { cursor: pointer; }
+        table.shoes tbody tr.sel td, table.shoes tbody tr.sel th { background: rgba(59, 130, 246, 0.22); font-weight: 700; }
+
+        @media (max-width: 768px) {
+            body { padding: 0; display: block; min-height: 100dvh; }
+            .main-wrapper { max-width: none; border-radius: 0; box-shadow: none; min-height: 100vh; min-height: 100dvh; }
+            .safe-top { display: block; order: -2; height: env(safe-area-inset-top, 0px); }
+            .header { order: -1; padding: 14px 16px; font-size: 1.05rem; }
+            .top-bar { padding: 8px 12px; }
+            .lang-btn { padding: 8px 10px; min-height: 38px; }
+            .top-bar select { font-size: 16px; padding: 8px 10px; }
+            .close-btn { padding: 8px 12px; }
+            .sidebar { display: none; }
+            .cat-select-wrap { display: block; }
+            .cat-select-wrap select { width: 100%; font-size: 16px; font-weight: 600; padding: 12px; min-height: 46px; }
+            .layout-body { flex-direction: column; min-height: 0; }
+            .content-area { padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+            .converter-grid, .imp-grid { grid-template-columns: 1fr; gap: 16px; }
+            input, select { font-size: 16px; padding: 12px; min-height: 46px; }
+            .btn { min-height: 46px; font-size: 1rem; }
+            .footer-actions .btn { width: 100%; }
+            .all-grid { grid-template-columns: 1fr; }
+            .radios input[type=radio] { width: 22px; height: 22px; min-height: 0; padding: 0; }
+            .radios { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 2px 8px; }
+            .radios label { padding: 6px 0; font-size: 0.95rem; }
+            table.shoes { font-size: 0.85rem; }
+            table.shoes th, table.shoes td { padding: 9px 4px; }
+        }
+
+        @media (display-mode: standalone), (hover: none) {
+            .close-btn { display: none; }
+        }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
+    <div class="safe-top"></div>
+
     <div class="top-bar">
         <div class="language-buttons">
-            <button class="lang-btn" onclick="cambiarIdioma('ko')" title="한국어"><span class="fi fi-kr"></span> KR</button>
-            <button class="lang-btn active" onclick="cambiarIdioma('es')" title="Español"><span class="fi fi-es"></span> ES</button>
-            <button class="lang-btn" onclick="cambiarIdioma('gl')" title="Galego"><span class="fi fi-es-ga"></span> GL</button>
-            <button class="lang-btn" onclick="cambiarIdioma('en')" title="English"><span class="fi fi-gb"></span> GB</button>
-            <button class="lang-btn" onclick="cambiarIdioma('pt')" title="Português (Brasil)"><span class="fi fi-br"></span> BR</button>
+            <button class="lang-btn" data-lang="ko" title="한국어"><span class="fi fi-kr"></span> KR</button>
+            <button class="lang-btn active" data-lang="es" title="Español"><span class="fi fi-es"></span> ES</button>
+            <button class="lang-btn" data-lang="gl" title="Galego"><span class="fi fi-es-ga"></span> GL</button>
+            <button class="lang-btn" data-lang="en" title="English"><span class="fi fi-gb"></span> GB</button>
+            <button class="lang-btn" data-lang="pt" title="Português (Brasil)"><span class="fi fi-br"></span> BR</button>
         </div>
         <div class="top-bar-right">
             <div>
                 <label for="themeSelect" id="lblTheme">🌓</label>
-                <select id="themeSelect" onchange="cambiarTema()">
+                <select id="themeSelect">
                     <option value="light" id="optLight" selected>Claro</option>
                     <option value="medium" id="optMedium">Medio</option>
                     <option value="dark" id="optDark">Oscuro</option>
                 </select>
             </div>
-            <!-- Botón Cerrar añadido -->
-            <button class="close-btn" id="btnClose" onclick="cerrarVentana()">Cerrar</button>
+            <button class="close-btn" id="btnClose">Cerrar</button>
         </div>
     </div>
 
-    <div class="header" id="headerTitle">
-        Conversor de ángulos planos
-    </div>
+    <div class="header" id="headerTitle"></div>
+
+    <div class="cat-select-wrap"><select id="catSelect" aria-label="Categoría"></select></div>
 
     <div class="layout-body">
-        <div class="sidebar" id="sidebarMenu">
-            <button class="sidebar-btn active" onclick="switchTab(0)">Ángulos planos</button>
-            <button class="sidebar-btn" onclick="switchTab(1)">Área</button>
-            <button class="sidebar-btn" onclick="switchTab(2)">Caudal</button>
-            <button class="sidebar-btn" onclick="switchTab(3)">Conductividad térmica</button>
-            <button class="sidebar-btn" onclick="switchTab(4)">Densidad</button>
-            <button class="sidebar-btn" onclick="switchTab(5)">Densidad aire</button>
-            <button class="sidebar-btn" onclick="switchTab(6)">Densidad variable</button>
-            <button class="sidebar-btn" onclick="switchTab(7)">Divisas</button>
-            <button class="sidebar-btn" onclick="switchTab(8)">Energía</button>
-            <button class="sidebar-btn" onclick="switchTab(9)">Entalpía</button>
-            <button class="sidebar-btn" onclick="switchTab(10)">Longitud</button>
-            <button class="sidebar-btn" onclick="switchTab(11)">Masa</button>
-            <button class="sidebar-btn" onclick="switchTab(12)">Memoria informática</button>
-            <button class="sidebar-btn" onclick="switchTab(13)">Peso prefijos</button>
-            <button class="sidebar-btn" onclick="switchTab(14)">Potencia marina</button>
-            <button class="sidebar-btn" onclick="switchTab(15)">Presión</button>
-            <button class="sidebar-btn" onclick="switchTab(16)">Psicrometría y aire</button>
-            <button class="sidebar-btn" onclick="switchTab(17)">Temperatura</button>
-            <button class="sidebar-btn" onclick="switchTab(18)">Tiempo</button>
-            <button class="sidebar-btn" onclick="switchTab(19)">Velocidad</button>
-            <button class="sidebar-btn" onclick="switchTab(20)">Viscosidad cinemática</button>
-            <button class="sidebar-btn" onclick="switchTab(21)">Viscosidad dinámica</button>
-        </div>
+        <div class="sidebar" id="sidebarMenu"></div>
 
         <div class="content-area">
-            <div>
-                <div class="tab-content active" id="tab-0"><div class="converter-grid"><div class="form-group"><label id="lblInput0" class="lbl-input">Ángulos planos</label><input type="number" id="val0" oninput="calcular(0)"><select id="selOrig0" onchange="calcular(0)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res0" readonly><select id="selDest0" onchange="calcular(0)"></select></div></div></div>
-                <div class="tab-content" id="tab-1"><div class="converter-grid"><div class="form-group"><label id="lblInput1" class="lbl-input">Área</label><input type="number" id="val1" oninput="calcular(1)"><select id="selOrig1" onchange="calcular(1)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res1" readonly><select id="selDest1" onchange="calcular(1)"></select></div></div></div>
-                <div class="tab-content" id="tab-2"><div class="converter-grid"><div class="form-group"><label id="lblInput2" class="lbl-input">Caudal</label><input type="number" id="val2" oninput="calcular(2)"><select id="selOrig2" onchange="calcular(2)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res2" readonly><select id="selDest2" onchange="calcular(2)"></select></div></div></div>
-                <div class="tab-content" id="tab-3"><div class="converter-grid"><div class="form-group"><label id="lblInput3" class="lbl-input">Conductividad térmica</label><input type="number" id="val3" oninput="calcular(3)"><select id="selOrig3" onchange="calcular(3)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res3" readonly><select id="selDest3" onchange="calcular(3)"></select></div></div></div>
-                <div class="tab-content" id="tab-4"><div class="converter-grid"><div class="form-group"><label id="lblInput4" class="lbl-input">Densidad</label><input type="number" id="val4" oninput="calcular(4)"><select id="selOrig4" onchange="calcular(4)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res4" readonly><select id="selDest4" onchange="calcular(4)"></select></div></div></div>
-                <div class="tab-content" id="tab-5"><div class="converter-grid"><div class="form-group"><label id="lblInput5" class="lbl-input">Densidad aire</label><input type="number" id="val5" value="1.225" oninput="calcular(5)"><select id="selOrig5" onchange="calcular(5)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res5" readonly><select id="selDest5" onchange="calcular(5)"></select></div></div></div>
-                <div class="tab-content" id="tab-6"><div class="converter-grid"><div class="form-group"><label id="lblInput6" class="lbl-input">Densidad variable</label><input type="number" id="val6" oninput="calcular(6)"><select id="selOrig6" onchange="calcular(6)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res6" readonly><select id="selDest6" onchange="calcular(6)"></select></div></div></div>
-                
-                <div class="tab-content" id="tab-7">
-                    <div class="converter-grid">
-                        <div class="form-group">
-                            <label id="lblInput7" class="lbl-input">Divisas</label>
-                            <input type="number" id="val7" value="1" oninput="calcular(7)">
-                            <select id="selOrig7" onchange="calcular(7)"></select>
-                        </div>
-                        <div class="form-group">
-                            <label class="lbl-res">Resultado</label>
-                            <input type="text" id="res7" readonly>
-                            <select id="selDest7" onchange="calcular(7)"></select>
-                        </div>
-                    </div>
-                    <div class="currency-info" id="currencyStatus">Cargando tipos de cambio en tiempo real...</div>
-                </div>
-
-                <div class="tab-content" id="tab-8"><div class="converter-grid"><div class="form-group"><label id="lblInput8" class="lbl-input">Energía</label><input type="number" id="val8" oninput="calcular(8)"><select id="selOrig8" onchange="calcular(8)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res8" readonly><select id="selDest8" onchange="calcular(8)"></select></div></div></div>
-                <div class="tab-content" id="tab-9"><div class="converter-grid"><div class="form-group"><label id="lblInput9" class="lbl-input">Entalpía</label><input type="number" id="val9" oninput="calcular(9)"><select id="selOrig9" onchange="calcular(9)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res9" readonly><select id="selDest9" onchange="calcular(9)"></select></div></div></div>
-                <div class="tab-content" id="tab-10"><div class="converter-grid"><div class="form-group"><label id="lblInput10" class="lbl-input">Longitud</label><input type="number" id="val10" oninput="calcular(10)"><select id="selOrig10" onchange="calcular(10)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res10" readonly><select id="selDest10" onchange="calcular(10)"></select></div></div></div>
-                <div class="tab-content" id="tab-11"><div class="converter-grid"><div class="form-group"><label id="lblInput11" class="lbl-input">Masa</label><input type="number" id="val11" oninput="calcular(11)"><select id="selOrig11" onchange="calcular(11)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res11" readonly><select id="selDest11" onchange="calcular(11)"></select></div></div></div>
-                <div class="tab-content" id="tab-12"><div class="converter-grid"><div class="form-group"><label id="lblInput12" class="lbl-input">Memoria informática</label><input type="number" id="val12" oninput="calcular(12)"><select id="selOrig12" onchange="calcular(12)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res12" readonly><select id="selDest12" onchange="calcular(12)"></select></div></div></div>
-                <div class="tab-content" id="tab-13"><div class="converter-grid"><div class="form-group"><label id="lblInput13" class="lbl-input">Peso prefijos</label><input type="number" id="val13" oninput="calcular(13)"><select id="selOrig13" onchange="calcular(13)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res13" readonly><select id="selDest13" onchange="calcular(13)"></select></div></div></div>
-                <div class="tab-content" id="tab-14"><div class="converter-grid"><div class="form-group"><label id="lblInput14" class="lbl-input">Potencia marina</label><input type="number" id="val14" oninput="calcular(14)"><select id="selOrig14" onchange="calcular(14)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res14" readonly><select id="selDest14" onchange="calcular(14)"></select></div></div></div>
-                <div class="tab-content" id="tab-15"><div class="converter-grid"><div class="form-group"><label id="lblInput15" class="lbl-input">Presión</label><input type="number" id="val15" oninput="calcular(15)"><select id="selOrig15" onchange="calcular(15)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res15" readonly><select id="selDest15" onchange="calcular(15)"></select></div></div></div>
-                <div class="tab-content" id="tab-16"><div class="converter-grid"><div class="form-group"><label id="lblInput16" class="lbl-input">Psicrometría y aire</label><input type="number" id="val16" oninput="calcular(16)"><select id="selOrig16" onchange="calcular(16)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res16" readonly><select id="selDest16" onchange="calcular(16)"></select></div></div></div>
-                <div class="tab-content" id="tab-17"><div class="converter-grid"><div class="form-group"><label id="lblInput17" class="lbl-input">Temperatura</label><input type="number" id="val17" oninput="calcular(17)"><select id="selOrig17" onchange="calcular(17)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res17" readonly><select id="selDest17" onchange="calcular(17)"></select></div></div></div>
-                <div class="tab-content" id="tab-18"><div class="converter-grid"><div class="form-group"><label id="lblInput18" class="lbl-input">Tiempo</label><input type="number" id="val18" oninput="calcular(18)"><select id="selOrig18" onchange="calcular(18)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res18" readonly><select id="selDest18" onchange="calcular(18)"></select></div></div></div>
-                <div class="tab-content" id="tab-19"><div class="converter-grid"><div class="form-group"><label id="lblInput19" class="lbl-input">Velocidad</label><input type="number" id="val19" oninput="calcular(19)"><select id="selOrig19" onchange="calcular(19)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res19" readonly><select id="selDest19" onchange="calcular(19)"></select></div></div></div>
-                <div class="tab-content" id="tab-20"><div class="converter-grid"><div class="form-group"><label id="lblInput20" class="lbl-input">Viscosidad cinemática</label><input type="number" id="val20" oninput="calcular(20)"><select id="selOrig20" onchange="calcular(20)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res20" readonly><select id="selDest20" onchange="calcular(20)"></select></div></div></div>
-                <div class="tab-content" id="tab-21"><div class="converter-grid"><div class="form-group"><label id="lblInput21" class="lbl-input">Viscosidad dinámica</label><input type="number" id="val21" oninput="calcular(21)"><select id="selOrig21" onchange="calcular(21)"></select></div><div class="form-group"><label class="lbl-res">Resultado</label><input type="text" id="res21" readonly><select id="selDest21" onchange="calcular(21)"></select></div></div></div>
-            </div>
-
-            <div class="footer-actions">
-                <button class="btn btn-secondary" onclick="limpiar()" id="btnClear">Limpiar</button>
+            <div id="tabs"></div>
+            <div class="footer-actions" id="footerActions">
+                <button class="btn btn-secondary" id="btnClear">Limpiar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const traducciones = {
-        es: {
-            tituloPrefijo: "Conversor de",
-            limpiar: "Limpiar",
-            cerrar: "Cerrar",
-            resultado: "Resultado",
-            categorias: [
-                "Ángulos planos", "Área", "Caudal", "Conductividad térmica", "Densidad", 
-                "Densidad aire", "Densidad variable", "Divisas", "Energía", "Entalpía", "Longitud", 
-                "Masa", "Memoria informática", "Peso prefijos", "Potencia marina", "Presión", 
-                "Psicrometría y aire", "Temperatura", "Tiempo", "Velocidad", 
-                "Viscosidad cinemática", "Viscosidad dinámica"
-            ],
-            unidades: [
-                ["grado sexagesimal", "radián", "gon", "minuto de arco", "segundo de arco"],
-                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectárea"],
-                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
-                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
-                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
-                ["kg/m³", "lb/ft³", "g/L"],
-                ["kg/m³", "g/cm³", "lb/ft³"],
-                ["USD - Dólar USA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen japonés", "CHF - Franco suizo", "CAD - Dólar canadiense", "AUD - Dólar australiano", "BRL - Real brasileño", "MXN - Peso mexicano"],
-                ["julio (J)", "kJ", "kWh", "kcal", "BTU"],
-                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
-                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
-                ["mg", "g", "kg", "t", "tonelada larga", "tonelada corta", "lb", "oz"],
-                ["Bytes", "KB", "MB", "GB", "TB"],
-                ["kg", "g", "mg", "µg"],
-                ["W", "kW", "BHP", "SHP", "CV/PS"],
-                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
-                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
-                ["°C", "K", "°F", "°Ra"],
-                ["s", "min", "h", "d"],
-                ["m/s", "nudos", "m/min", "km/h", "ft/s", "fpm", "mph"],
-                ["cSt", "St", "m²/s"],
-                ["cP", "Pa·s", "P"]
-            ]
-        },
-        ko: {
-            tituloPrefijo: "변환기:",
-            limpiar: "지우기",
-            cerrar: "닫기",
-            resultado: "결과",
-            categorias: [
-                "평면각", "면적", "유량", "열전도율", "밀도", 
-                "공기 밀도", "가변 밀도", "통화", "에너지", "엔탈피", "길이", 
-                "질량", "컴퓨터 메모리", "무게 접두사", "해양 동력", "압력", 
-                "습공기", "온도", "시간", "속도", 
-                "동점성계수", "점성계수"
-            ],
-            unidades: [
-                ["도 (degree)", "라디안 (radian)", "그라디안 (gon)", "각분 (arcmin)", "각초 (arcsec)"],
-                ["제곱밀리미터 (mm²)", "제곱센티미터 (cm²)", "제곱데시미터 (dm²)", "제곱미터 (m²)", "제곱인치 (in²)", "제곱피트 (ft²)", "제곱야드 (yd²)", "에이커 (ac)", "헥타르 (ha)"],
-                ["세제곱미터/시간 (m³/h)", "세제곱미터/초 (m³/s)", "리터/초 (L/s)", "리터/분 (L/min)", "세제곱피트/분 (cfm)", "갤런/분 (gpm)"],
-                ["와트/미터·켈빈 (W/(m·K))", "BTU/(시간·피트·°F)", "kcal/(시간·미터·°C)"],
-                ["킬로그램/세제곱미터 (kg/m³)", "그램/세제곱센티미터 (g/cm³)", "파운드/세제곱피트 (lb/ft³)", "파운드/세제곱인치 (lb/in³)"],
-                ["킬로그램/세제곱미터 (kg/m³)", "파운드/세제곱피트 (lb/ft³)", "그램/리터 (g/L)"],
-                ["킬로그램/세제곱미터 (kg/m³)", "그램/세제곱센티미터 (g/cm³)", "파운드/세제곱피트 (lb/ft³)"],
-                ["USD - 미국 달러", "EUR - 유로", "GBP - 영국 파운드", "JPY - 일본 엔", "CHF - 스위스 프랑", "CAD - 캐나다 달러", "AUD - 호주 달러", "BRL - 브라질 레알", "MXN - 멕시코 페소"],
-                ["줄 (J)", "킬로줄 (kJ)", "킬로와트시 (kWh)", "킬로칼로리 (kcal)", "BTU"],
-                ["킬로줄/킬로그램 (kJ/kg)", "줄/그램 (J/g)", "킬로칼로리/킬로그램 (kcal/kg)", "BTU/파운드 (BTU/lb)"],
-                ["밀리미터 (mm)", "센티미터 (cm)", "데시미터 (dm)", "미터 (m)", "킬로미터 (km)", "인치 (in)", "피트 (ft)", "야드 (yd)", "마일 (mi)"],
-                ["밀리그램 (mg)", "그램 (g)", "킬로그램 (kg)", "톤 (t)", "롱톤 (long ton)", "숏톤 (short ton)", "파운드 (lb)", "온스 (oz)"],
-                ["바이트 (Bytes)", "킬로바이트 (KB)", "메가바이트 (MB)", "기가바이트 (GB)", "테라바이트 (TB)"],
-                ["킬로그램 (kg)", "그램 (g)", "밀리그램 (mg)", "마이크로그램 (µg)"],
-                ["와트 (W)", "킬로와트 (kW)", "브레이크 마력 (BHP)", "축 마력 (SHP)", "독일 마력 (PS/CV)"],
-                ["파스칼 (Pa)", "킬로파스칼 (kPa)", "바 (bar)", "psi", "기압 (atm)", "수은주 밀리미터 (mmHg)", "수주 인치 (in.w.g.)"],
-                ["수증기량/건공기 (g_v/kg_a)", "엔탈피 (kJ/kg_a)", "비체적 (m³/kg_a)"],
-                ["섭씨 (°C)", "켈빈 (K)", "화씨 (°F)", "랭킨 (°Ra)"],
-                ["초 (s)", "분 (min)", "시간 (h)", "일 (d)"],
-                ["미터/초 (m/s)", "노트 (knots)", "미터/분 (m/min)", "킬로미터/시간 (km/h)", "피트/초 (ft/s)", "피트/분 (fpm)", "마일/시간 (mph)"],
-                ["센티스토크 (cSt)", "스토크 (St)", "제곱미터/초 (m²/s)"],
-                ["센티푸아즈 (cP)", "파스칼초 (Pa·s)", "푸아즈 (P)"]
-            ]
-        },
-        en: {
-            tituloPrefijo: "Converter of",
-            limpiar: "Clear",
-            cerrar: "Close",
-            resultado: "Result",
-            categorias: [
-                "Plane angles", "Area", "Flow rate", "Thermal conductivity", "Density", 
-                "Air density", "Variable density", "Currencies", "Energy", "Enthalpy", "Length", 
-                "Mass", "Computer memory", "Weight prefixes", "Marine power", "Pressure", 
-                "Psychrometry and air", "Temperature", "Time", "Velocity", 
-                "Kinematic viscosity", "Dynamic viscosity"
-            ],
-            unidades: [
-                ["degree", "radian", "gon", "arcmin", "arcsec"],
-                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectare"],
-                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
-                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
-                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
-                ["kg/m³", "lb/ft³", "g/L"],
-                ["kg/m³", "g/cm³", "lb/ft³"],
-                ["USD - US Dollar", "EUR - Euro", "GBP - British Pound", "JPY - Japanese Yen", "CHF - Swiss Franc", "CAD - Canadian Dollar", "AUD - Australian Dollar", "BRL - Brazilian Real", "MXN - Mexican Peso"],
-                ["joule (J)", "kJ", "kWh", "kcal", "BTU"],
-                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
-                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
-                ["mg", "g", "kg", "t", "long ton", "short ton", "lb", "oz"],
-                ["Bytes", "KB", "MB", "GB", "TB"],
-                ["kg", "g", "mg", "µg"],
-                ["W", "kW", "BHP", "SHP", "CV/PS"],
-                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
-                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
-                ["°C", "K", "°F", "°Ra"],
-                ["s", "min", "h", "d"],
-                ["m/s", "knots", "m/min", "km/h", "ft/s", "fpm", "mph"],
-                ["cSt", "St", "m²/s"],
-                ["cP", "Pa·s", "P"]
-            ]
-        },
-        gl: {
-            tituloPrefijo: "Conversor de",
-            limpiar: "Limpar",
-            cerrar: "Pechar",
-            resultado: "Resultado",
-            categorias: [
-                "Ángulos planos", "Área", "Caudal", "Conductividade térmica", "Densidade", 
-                "Densidade aire", "Densidade variable", "Divisas", "Enerxía", "Entalpía", "Lonxitude", 
-                "Masa", "Memoria informática", "Peso prefixos", "Potencia mariña", "Presión", 
-                "Psicrometría e aire", "Temperatura", "Tempo", "Velocidade", 
-                "Viscosidade cinemática", "Viscosidade dinámica"
-            ],
-            unidades: [
-                ["grao sexaxesimal", "radián", "gon", "minuto de arco", "segundo de arco"],
-                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectárea"],
-                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
-                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
-                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
-                ["kg/m³", "lb/ft³", "g/L"],
-                ["kg/m³", "g/cm³", "lb/ft³"],
-                ["USD - Dólar USA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen xaponés", "CHF - Franco suízo", "CAD - Dólar canadense", "AUD - Dólar australiano", "BRL - Real brasileiro", "MXN - Peso mexicano"],
-                ["xulio (J)", "kJ", "kWh", "kcal", "BTU"],
-                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
-                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
-                ["mg", "g", "kg", "t", "tonelada longa", "tonelada curta", "lb", "oz"],
-                ["Bytes", "KB", "MB", "GB", "TB"],
-                ["kg", "g", "mg", "µg"],
-                ["W", "kW", "BHP", "SHP", "CV/PS"],
-                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
-                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
-                ["°C", "K", "°F", "°Ra"],
-                ["s", "min", "h", "d"],
-                ["m/s", "nudos", "m/min", "km/h", "ft/s", "fpm", "mph"],
-                ["cSt", "St", "m²/s"],
-                ["cP", "Pa·s", "P"]
-            ]
-        },
-        pt: {
-            tituloPrefijo: "Conversor de",
-            limpiar: "Limpar",
-            cerrar: "Fechar",
-            resultado: "Resultado",
-            categorias: [
-                "Ângulos planos", "Área", "Vazão", "Condutividade térmica", "Densidade", 
-                "Densidade do ar", "Densidade variável", "Moedas", "Energia", "Entalpia", "Comprimento", 
-                "Massa", "Memória de computador", "Prefixos de peso", "Potência marítima", "Pressão", 
-                "Psicrometria e ar", "Temperatura", "Tempo", "Velocidade", 
-                "Viscosidade cinemática", "Viscosidade dinâmica"
-            ],
-            unidades: [
-                ["grau sexagesimal", "radiano", "gon", "minuto de arco", "segundo de arco"],
-                ["mm²", "cm²", "dm²", "m²", "in²", "ft²", "yd²", "acre", "hectare"],
-                ["m³/h", "m³/s", "L/s", "L/min", "cfm", "gpm"],
-                ["W/(m·K)", "BTU/(h·ft·°F)", "kcal/(h·m·°C)"],
-                ["kg/m³", "g/cm³", "lb/ft³", "lb/in³"],
-                ["kg/m³", "lb/ft³", "g/L"],
-                ["kg/m³", "g/cm³", "lb/ft³"],
-                ["USD - Dólar dos EUA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Iene japonês", "CHF - Franco suíço", "CAD - Dólar canadense", "AUD - Dólar australiano", "BRL - Real brasileiro", "MXN - Peso mexicano"],
-                ["joule (J)", "kJ", "kWh", "kcal", "BTU"],
-                ["kJ/kg", "J/g", "kcal/kg", "BTU/lb"],
-                ["mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi"],
-                ["mg", "g", "kg", "t", "tonelada longa", "tonelada curta", "lb", "oz"],
-                ["Bytes", "KB", "MB", "GB", "TB"],
-                ["kg", "g", "mg", "µg"],
-                ["W", "kW", "BHP", "SHP", "CV/PS"],
-                ["Pa", "kPa", "bar", "psi", "atm", "mmHg", "in.w.g."],
-                ["g_v/kg_a", "kJ/kg_a", "m³/kg_a"],
-                ["°C", "K", "°F", "°Ra"],
-                ["s", "min", "h", "d"],
-                ["m/s", "nós", "m/min", "km/h", "ft/s", "fpm", "mph"],
-                ["cSt", "St", "m²/s"],
-                ["cP", "Pa·s", "P"]
-            ]
-        }
+(function () {
+    'use strict';
+
+    const $ = id => document.getElementById(id);
+    const LS = {
+        get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+        set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
     };
 
-    let idiomaActual = "es";
+    /* ===================== TEXTOS DE INTERFAZ ===================== */
+    const UI = {
+        es: { titulo: "Conversor de", limpiar: "Limpiar", cerrar: "Cerrar", resultado: "Resultado", todas: "Ver en todas las unidades",
+              claro: "Claro", medio: "Medio", oscuro: "Oscuro", categoria: "Categoría",
+              cambioOk: "Tipos de cambio actualizados en tiempo real (", cambioCache: "Sin conexión: usando los últimos tipos de cambio guardados (", cambioDef: "Aviso: usando valores de cambio aproximados por error de red.",
+              ajustar: "Ajustar a:", decimales: "decimales", pulgada: "pulgada", pulgadas: "Pulgadas", parteEntera: "Parte entera", fraccion: "Fracción",
+              milimetros: "Milímetros", pies: "Pies", centimetros: "Centímetros", ant: "Ant", sig: "Sig", precision: "Precisión actual:", ajuste: "Ajuste:",
+              nota: "1 pulgada [inch, (\"), in] = 25,4 mm",
+              zEU: "Sistema Métrico Europeo", zMuj: "De Mujeres", zHom: "De Hombres", zCm: "Aprox. en centímetros" },
+        ko: { titulo: "변환기:", limpiar: "지우기", cerrar: "닫기", resultado: "결과", todas: "모든 단위로 보기",
+              claro: "밝게", medio: "중간", oscuro: "어둡게", categoria: "카테고리",
+              cambioOk: "실시간 환율 업데이트 완료 (", cambioCache: "오프라인: 마지막으로 저장된 환율 사용 (", cambioDef: "알림: 네트워크 오류로 인해 기본 환율을 사용합니다.",
+              ajustar: "맞춤:", decimales: "소수", pulgada: "인치", pulgadas: "인치", parteEntera: "정수부", fraccion: "분수",
+              milimetros: "밀리미터", pies: "피트", centimetros: "센티미터", ant: "이전", sig: "다음", precision: "현재 정밀도:", ajuste: "오차:",
+              nota: "1인치 [\", in] = 25.4 mm",
+              zEU: "유럽 미터법", zMuj: "여성", zHom: "남성", zCm: "대략 센티미터(cm)" },
+        en: { titulo: "Converter of", limpiar: "Clear", cerrar: "Close", resultado: "Result", todas: "Show in all units",
+              claro: "Light", medio: "Medium", oscuro: "Dark", categoria: "Category",
+              cambioOk: "Exchange rates updated in real time (", cambioCache: "Offline: using the last saved exchange rates (", cambioDef: "Notice: using approximate exchange rates due to a network error.",
+              ajustar: "Round to:", decimales: "decimals", pulgada: "inch", pulgadas: "Inches", parteEntera: "Whole part", fraccion: "Fraction",
+              milimetros: "Millimeters", pies: "Feet", centimetros: "Centimeters", ant: "Prev", sig: "Next", precision: "Current precision:", ajuste: "Rounding:",
+              nota: "1 inch [\", in] = 25.4 mm",
+              zEU: "European metric system", zMuj: "Women's", zHom: "Men's", zCm: "Approx. in centimeters" },
+        gl: { titulo: "Conversor de", limpiar: "Limpar", cerrar: "Pechar", resultado: "Resultado", todas: "Ver en todas as unidades",
+              claro: "Claro", medio: "Medio", oscuro: "Escuro", categoria: "Categoría",
+              cambioOk: "Tipos de cambio actualizados en tempo real (", cambioCache: "Sen conexión: usando os últimos tipos de cambio gardados (", cambioDef: "Aviso: usando valores de cambio aproximados por erro de rede.",
+              ajustar: "Axustar a:", decimales: "decimais", pulgada: "polgada", pulgadas: "Polgadas", parteEntera: "Parte enteira", fraccion: "Fracción",
+              milimetros: "Milímetros", pies: "Pés", centimetros: "Centímetros", ant: "Ant", sig: "Seg", precision: "Precisión actual:", ajuste: "Axuste:",
+              nota: "1 polgada [inch, (\"), in] = 25,4 mm",
+              zEU: "Sistema Métrico Europeo", zMuj: "De Mulleres", zHom: "De Homes", zCm: "Aprox. en centímetros" },
+        pt: { titulo: "Conversor de", limpiar: "Limpar", cerrar: "Fechar", resultado: "Resultado", todas: "Ver em todas as unidades",
+              claro: "Claro", medio: "Médio", oscuro: "Escuro", categoria: "Categoria",
+              cambioOk: "Taxas de câmbio atualizadas em tempo real (", cambioCache: "Offline: usando as últimas taxas de câmbio salvas (", cambioDef: "Aviso: usando taxas de câmbio aproximadas por erro de rede.",
+              ajustar: "Ajustar para:", decimales: "decimais", pulgada: "polegada", pulgadas: "Polegadas", parteEntera: "Parte inteira", fraccion: "Fração",
+              milimetros: "Milímetros", pies: "Pés", centimetros: "Centímetros", ant: "Ant", sig: "Próx", precision: "Precisão atual:", ajuste: "Ajuste:",
+              nota: "1 polegada [inch, (\"), in] = 25,4 mm",
+              zEU: "Sistema Métrico Europeu", zMuj: "Femininos", zHom: "Masculinos", zCm: "Aprox. em centímetros" }
+    };
 
-    const factoresComunes = [
-        [1, 57.2957795, 0.9, 0.01666667, 0.000277778],
-        [0.000001, 0.0001, 0.01, 1, 0.00064516, 0.092903, 0.836127, 4046.86, 10000],
-        [1, 3600, 3.6, 0.06, 1.69901, 0.227125],
-        [1, 1.730735, 1.16222],
-        [1, 1000, 16.01846, 27679.9],
-        [1, 16.01846, 1],
-        [1, 1000, 16.01846],
-        [1, 0.92, 0.79, 155, 0.90, 1.37, 1.52, 5.20, 17.0],
-        [1, 1000, 3600000, 4186.8, 1055.06],
-        [1, 1, 4.1868, 2.326],
-        [0.001, 0.01, 0.1, 1, 1000, 0.0254, 0.3048, 0.9144, 1609.34],
-        [0.000001, 0.001, 1, 1000, 1016.05, 907.185, 0.453592, 0.0283495],
-        [1, 1024, 1048576, 1073741824, 1099511627776],
-        [1, 0.001, 0.000001, 0.000000001],
-        [1, 1000, 745.7, 745.7, 735.5],
-        [1, 1000, 100000, 6894.76, 101325, 133.322, 248.84],
-        [1, 1, 1],
-        [],
-        [1, 60, 3600, 86400],
-        [1, 0.514444, 0.0166667, 0.277778, 0.3048, 0.00508, 0.44704],
-        [1, 100, 1000000],
-        [1, 1000, 100]
+    /* ===================== DEFINICIÓN DE UNIDADES ===================== */
+    const N = (es, en, gl, pt, ko) => ({ es, en, gl, pt, ko });
+    const u = (f, n, ko) => ({ f, n: ko ? { es: n, en: n, gl: n, pt: n, ko } : n });   // mismo nombre en todos los idiomas
+    const U = (f, n) => ({ f, n });                                                       // nombre por idioma
+    const nm = (n, lang) => typeof n === 'string' ? n : (n[lang] || n.es || n.en);
+
+    const DIVISAS_COD = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "BRL", "MXN"];
+    const DIVISAS_FALLBACK = { USD: 1, EUR: 0.92, GBP: 0.79, JPY: 155, CHF: 0.90, CAD: 1.37, AUD: 1.52, BRL: 5.20, MXN: 17.0 }; // unidades por 1 USD
+    const DIVISAS_NOMBRES = {
+        es: ["USD - Dólar USA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen japonés", "CHF - Franco suizo", "CAD - Dólar canadiense", "AUD - Dólar australiano", "BRL - Real brasileño", "MXN - Peso mexicano"],
+        ko: ["USD - 미국 달러", "EUR - 유로", "GBP - 영국 파운드", "JPY - 일본 엔", "CHF - 스위스 프랑", "CAD - 캐나다 달러", "AUD - 호주 달러", "BRL - 브라질 레알", "MXN - 멕시코 페소"],
+        en: ["USD - US Dollar", "EUR - Euro", "GBP - British Pound", "JPY - Japanese Yen", "CHF - Swiss Franc", "CAD - Canadian Dollar", "AUD - Australian Dollar", "BRL - Brazilian Real", "MXN - Mexican Peso"],
+        gl: ["USD - Dólar USA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Yen xaponés", "CHF - Franco suízo", "CAD - Dólar canadense", "AUD - Dólar australiano", "BRL - Real brasileiro", "MXN - Peso mexicano"],
+        pt: ["USD - Dólar dos EUA", "EUR - Euro", "GBP - Libra esterlina", "JPY - Iene japonês", "CHF - Franco suíço", "CAD - Dólar canadense", "AUD - Dólar australiano", "BRL - Real brasileiro", "MXN - Peso mexicano"]
+    };
+
+    const DIA = 86400;
+
+    const CATS = [
+        { id: 'angulos', n: N('Ángulos planos', 'Plane angles', 'Ángulos planos', 'Ângulos planos', '평면각'), units: [
+            U(1, N('grado sexagesimal', 'degree', 'grao sexaxesimal', 'grau sexagesimal', '도 (degree)')),
+            U(57.2957795, N('radián', 'radian', 'radián', 'radiano', '라디안 (radian)')),
+            u(0.9, 'gon', '그라디안 (gon)'),
+            U(0.01666667, N('minuto de arco', 'arcmin', 'minuto de arco', 'minuto de arco', '각분 (arcmin)')),
+            U(0.000277778, N('segundo de arco', 'arcsec', 'segundo de arco', 'segundo de arco', '각초 (arcsec)'))] },
+
+        { id: 'area', n: N('Área', 'Area', 'Área', 'Área', '면적'), units: [
+            u(0.000001, 'mm²', '제곱밀리미터 (mm²)'), u(0.0001, 'cm²', '제곱센티미터 (cm²)'), u(0.01, 'dm²', '제곱데시미터 (dm²)'), u(1, 'm²', '제곱미터 (m²)'),
+            u(0.00064516, 'in²', '제곱인치 (in²)'), u(0.092903, 'ft²', '제곱피트 (ft²)'), u(0.836127, 'yd²', '제곱야드 (yd²)'),
+            U(4046.86, N('acre', 'acre', 'acre', 'acre', '에이커 (ac)')),
+            U(10000, N('hectárea', 'hectare', 'hectárea', 'hectare', '헥타르 (ha)'))] },
+
+        { id: 'caudal', n: N('Caudal', 'Flow rate', 'Caudal', 'Vazão', '유량'), units: [
+            u(1, 'm³/h', '세제곱미터/시간 (m³/h)'), u(3600, 'm³/s', '세제곱미터/초 (m³/s)'), u(3.6, 'L/s', '리터/초 (L/s)'), u(0.06, 'L/min', '리터/분 (L/min)'),
+            u(1.69901, 'cfm', '세제곱피트/분 (cfm)'), u(0.227125, 'gpm', '갤런/분 (gpm)')] },
+
+        { id: 'conductividad', n: N('Conductividad térmica', 'Thermal conductivity', 'Conductividade térmica', 'Condutividade térmica', '열전도율'), units: [
+            u(1, 'W/(m·K)', '와트/미터·켈빈 (W/(m·K))'), u(1.730735, 'BTU/(h·ft·°F)', 'BTU/(시간·피트·°F)'), u(1.16222, 'kcal/(h·m·°C)', 'kcal/(시간·미터·°C)')] },
+
+        { id: 'densidad', n: N('Densidad', 'Density', 'Densidade', 'Densidade', '밀도'), units: [
+            u(1, 'kg/m³', '킬로그램/세제곱미터 (kg/m³)'), u(1000, 'g/cm³', '그램/세제곱센티미터 (g/cm³)'), u(16.01846, 'lb/ft³', '파운드/세제곱피트 (lb/ft³)'), u(27679.9, 'lb/in³', '파운드/세제곱인치 (lb/in³)')] },
+
+        { id: 'densidad_aire', n: N('Densidad aire', 'Air density', 'Densidade aire', 'Densidade do ar', '공기 밀도'), def: 1.225, units: [
+            u(1, 'kg/m³', '킬로그램/세제곱미터 (kg/m³)'), u(16.01846, 'lb/ft³', '파운드/세제곱피트 (lb/ft³)'), u(1, 'g/L', '그램/리터 (g/L)')] },
+
+        { id: 'densidad_var', n: N('Densidad variable', 'Variable density', 'Densidade variable', 'Densidade variável', '가변 밀도'), units: [
+            u(1, 'kg/m³', '킬로그램/세제곱미터 (kg/m³)'), u(1000, 'g/cm³', '그램/세제곱센티미터 (g/cm³)'), u(16.01846, 'lb/ft³', '파운드/세제곱피트 (lb/ft³)')] },
+
+        { id: 'divisas', n: N('Divisas', 'Currencies', 'Divisas', 'Moedas', '통화'), def: 1, o: 0, d: 1, units: [] /* se rellena abajo */ },
+
+        { id: 'energia', n: N('Energía', 'Energy', 'Enerxía', 'Energia', '에너지'), units: [
+            U(1, N('julio (J)', 'joule (J)', 'xulio (J)', 'joule (J)', '줄 (J)')),
+            u(1000, 'kJ', '킬로줄 (kJ)'),
+            u(3600, 'Wh'),
+            u(3600000, 'kWh', '킬로와트시 (kWh)'),
+            u(1, 'N·m'),
+            u(1, 'C·V'),
+            U(1e-7, N('ergio (erg)', 'erg', 'ergo (erg)', 'erg', '에르그 (erg)')),
+            u(9.80665, 'kg·m (kgf·m)'),
+            u(2684519.537696, 'HP·h'),
+            u(1.3558179483314, 'lbf·ft', '파운드·피트 (lbf·ft)'),
+            u(0.1129848290276, 'lbf·in', '파운드·인치 (lbf·in)'),
+            u(0.101325, 'atm·cm³'),
+            u(2869.2044809345, 'atm·ft³'),
+            u(4.1855, 'cal (15 °C)'),
+            u(4185.5, 'kcal (15 °C)', '킬로칼로리 (kcal, 15 °C)'),
+            u(4186.8, 'kcal (IT)', '킬로칼로리 (kcal, IT)'),
+            u(1055.056, 'BTU (ISO)'),
+            u(1.05506e8, 'therm (EEG)'),
+            u(1.054804e8, 'therm (US)'),
+            u(1899.100534716, 'Celsius (CHU)'),
+            U(1.602176634e-19, N('electrón·voltio (eV)', 'electronvolt (eV)', 'electrón·volt (eV)', 'elétron-volt (eV)', '전자볼트 (eV)')),
+            u(1.602176634e-13, 'MeV'),
+            u(2.1798723611035e-18, 'Rydberg (Ry)'),
+            u(6.1178632e9, 'bboe'),
+            u(4.1868e10, 'toe'),
+            u(2.93076e10, 'tce'),
+            U(4.184e9, N('ton TNT equiv.', 'ton TNT equiv.', 'ton TNT equiv.', 'ton TNT equiv.', 'TNT 톤 환산')),
+            U(8.987551787368176e13, N('gramo masa (E=mc²)', 'gram mass (E=mc²)', 'gramo masa (E=mc²)', 'grama massa (E=mc²)', '질량 그램 (E=mc²)'))] },
+
+        { id: 'entalpia', n: N('Entalpía', 'Enthalpy', 'Entalpía', 'Entalpia', '엔탈피'), units: [
+            u(1, 'kJ/kg', '킬로줄/킬로그램 (kJ/kg)'), u(1, 'J/g', '줄/그램 (J/g)'), u(4.1868, 'kcal/kg', '킬로칼로리/킬로그램 (kcal/kg)'), u(2.326, 'BTU/lb', 'BTU/파운드 (BTU/lb)')] },
+
+        { id: 'longitud', n: N('Longitud', 'Length', 'Lonxitude', 'Comprimento', '길이'), units: [
+            u(0.001, 'mm', '밀리미터 (mm)'), u(0.01, 'cm', '센티미터 (cm)'), u(0.1, 'dm', '데시미터 (dm)'), u(1, 'm', '미터 (m)'), u(1000, 'km', '킬로미터 (km)'),
+            u(0.0254, 'in', '인치 (in)'), u(0.3048, 'ft', '피트 (ft)'), u(0.9144, 'yd', '야드 (yd)'), u(1609.34, 'mi', '마일 (mi)')] },
+        { id: 'pulgadas', type: 'imp', feet: false, sub: true, n: N('Pulgadas ↔ mm', 'Inches ↔ mm', 'Polgadas ↔ mm', 'Polegadas ↔ mm', '인치 ↔ mm') },
+        { id: 'pies', type: 'imp', feet: true, sub: true, n: N('Pies ↔ cm', 'Feet ↔ cm', 'Pés ↔ cm', 'Pés ↔ cm', '피트 ↔ cm') },
+
+        { id: 'masa', n: N('Masa', 'Mass', 'Masa', 'Massa', '질량'), units: [
+            u(0.000001, 'mg', '밀리그램 (mg)'), u(0.001, 'g', '그램 (g)'), u(1, 'kg', '킬로그램 (kg)'), u(1000, 't', '톤 (t)'),
+            U(1016.05, N('tonelada larga', 'long ton', 'tonelada longa', 'tonelada longa', '롱톤 (long ton)')),
+            U(907.185, N('tonelada corta', 'short ton', 'tonelada curta', 'tonelada curta', '숏톤 (short ton)')),
+            u(0.453592, 'lb', '파운드 (lb)'), u(0.0283495, 'oz', '온스 (oz)')] },
+
+        { id: 'memoria', n: N('Memoria informática', 'Computer memory', 'Memoria informática', 'Memória de computador', '컴퓨터 메모리'), units: [
+            u(1, 'Bytes', '바이트 (Bytes)'), u(1024, 'KB', '킬로바이트 (KB)'), u(1048576, 'MB', '메가바이트 (MB)'), u(1073741824, 'GB', '기가바이트 (GB)'), u(1099511627776, 'TB', '테라바이트 (TB)')] },
+
+        { id: 'peso_prefijos', n: N('Peso prefijos', 'Weight prefixes', 'Peso prefixos', 'Prefixos de peso', '무게 접두사'), units: [
+            u(1, 'kg', '킬로그램 (kg)'), u(0.001, 'g', '그램 (g)'), u(0.000001, 'mg', '밀리그램 (mg)'), u(0.000000001, 'µg', '마이크로그램 (µg)')] },
+
+        { id: 'potencia', n: N('Potencia marina', 'Marine power', 'Potencia mariña', 'Potência marítima', '해양 동력'), units: [
+            u(1, 'W', '와트 (W)'), u(1000, 'kW', '킬로와트 (kW)'), u(745.7, 'BHP', '브레이크 마력 (BHP)'), u(745.7, 'SHP', '축 마력 (SHP)'), u(735.5, 'CV/PS', '독일 마력 (PS/CV)')] },
+
+        { id: 'presion', n: N('Presión', 'Pressure', 'Presión', 'Pressão', '압력'), units: [
+            u(1, 'Pa', '파스칼 (Pa)'), u(1000, 'kPa', '킬로파스칼 (kPa)'), u(100000, 'bar', '바 (bar)'), u(6894.76, 'psi'), u(101325, 'atm', '기압 (atm)'),
+            u(133.322, 'mmHg', '수은주 밀리미터 (mmHg)'), u(248.84, 'in.w.g.', '수주 인치 (in.w.g.)')] },
+
+        { id: 'psicrometria', n: N('Psicrometría y aire', 'Psychrometry and air', 'Psicrometría e aire', 'Psicrometria e ar', '습공기'), units: [
+            u(1, 'g_v/kg_a', '수증기량/건공기 (g_v/kg_a)'), u(1, 'kJ/kg_a', '엔탈피 (kJ/kg_a)'), u(1, 'm³/kg_a', '비체적 (m³/kg_a)')] },
+
+        { id: 'temperatura', n: N('Temperatura', 'Temperature', 'Temperatura', 'Temperatura', '온도'), units: [
+            u(1, '°C', '섭씨 (°C)'), u(1, 'K', '켈빈 (K)'), u(1, '°F', '화씨 (°F)'), u(1, '°Ra', '랭킨 (°Ra)')] },
+
+        { id: 'tiempo', n: N('Tiempo', 'Time', 'Tempo', 'Tempo', '시간'), units: [
+            u(1, 's', '초 (s)'), u(60, 'min', '분 (min)'), u(3600, 'h', '시간 (h)'), u(DIA, 'd', '일 (d)'),
+            U(7 * DIA, N('semana', 'week', 'semana', 'semana', '주')),
+            U(365.25 / 12 * DIA, N('mes', 'month', 'mes', 'mês', '개월')),
+            U(365.25 * DIA, N('año', 'year', 'ano', 'ano', '년')),
+            U(3652.5 * DIA, N('década', 'decade', 'década', 'década', '10년')),
+            U(36525 * DIA, N('siglo', 'century', 'século', 'século', '세기')),
+            u(1e-3, 'ms'), u(1e-6, 'µs'), u(1e-9, 'ns'),
+            u(0.864, 'blink'), u(1e-8, 'shake'), u(1 / 3e9, 'wink'),
+            U(2.4188843265864e-17, N('unidad atómica (a.u.)', 'atomic unit (a.u.)', 'unidade atómica (a.u.)', 'unidade atômica (a.u.)', '원자 단위 (a.u.)')),
+            U(27.321661 * DIA, N('mes sideral', 'sidereal month', 'mes sideral', 'mês sideral', '항성월')),
+            U(365.2425 / 12 * DIA, N('mes solar medio', 'mean solar month', 'mes solar medio', 'mês solar médio', '평균 태양월')),
+            U(29.530589 * DIA, N('mes lunar', 'lunar month', 'mes lunar', 'mês lunar', '삭망월')),
+            U(365.256363004 * DIA, N('año sideral', 'sidereal year', 'ano sideral', 'ano sideral', '항성년')),
+            U(365.2425 * DIA, N('año solar medio', 'mean solar year', 'ano solar medio', 'ano solar médio', '평균 태양년')),
+            U(365.242198781 * DIA, N('año Bessel astr.', 'Besselian year', 'ano Bessel astr.', 'ano de Bessel astr.', '베셀년')),
+            U(365 * DIA, N('año calendario', 'calendar year', 'ano calendario', 'ano civil', '역년')),
+            U(365.2421897 * DIA, N('año tropical', 'tropical year', 'ano tropical', 'ano tropical', '회귀년'))] },
+
+        { id: 'graficas', n: N('Unidades gráficas', 'Graphic units', 'Unidades gráficas', 'Unidades gráficas', '그래픽 단위'), o: 4, d: 5, units: [
+            U(1, N('twip', 'twip', 'twip', 'twip', '트윕 (twip)')),
+            U(15, N('píxel (96 dpi)', 'pixel (96 dpi)', 'píxel (96 dpi)', 'pixel (96 dpi)', '픽셀 (96 dpi)')),
+            U(20, N('punto (pt)', 'point (pt)', 'punto (pt)', 'ponto (pt)', '포인트 (pt)')),
+            U(120, N('carácter', 'character', 'carácter', 'caractere', '문자')),
+            U(1440, N('pulgada (in)', 'inch (in)', 'polgada (in)', 'polegada (in)', '인치 (in)')),
+            U(1440 / 25.4, N('milímetro (mm)', 'millimeter (mm)', 'milímetro (mm)', 'milímetro (mm)', '밀리미터 (mm)')),
+            U(14400 / 25.4, N('centímetro (cm)', 'centimeter (cm)', 'centímetro (cm)', 'centímetro (cm)', '센티미터 (cm)'))] },
+
+        { id: 'velocidad', n: N('Velocidad', 'Velocity', 'Velocidade', 'Velocidade', '속도'), units: [
+            u(1, 'm/s', '미터/초 (m/s)'),
+            U(0.514444, N('nudos', 'knots', 'nudos', 'nós', '노트 (knots)')),
+            u(0.0166667, 'm/min', '미터/분 (m/min)'), u(0.277778, 'km/h', '킬로미터/시간 (km/h)'), u(0.3048, 'ft/s', '피트/초 (ft/s)'), u(0.00508, 'fpm', '피트/분 (fpm)'), u(0.44704, 'mph', '마일/시간 (mph)')] },
+
+        { id: 'viscosidad_cin', n: N('Viscosidad cinemática', 'Kinematic viscosity', 'Viscosidade cinemática', 'Viscosidade cinemática', '동점성계수'), units: [
+            u(1, 'cSt', '센티스토크 (cSt)'), u(100, 'St', '스토크 (St)'), u(1000000, 'm²/s', '제곱미터/초 (m²/s)')] },
+
+        { id: 'viscosidad_din', n: N('Viscosidad dinámica', 'Dynamic viscosity', 'Viscosidade dinámica', 'Viscosidade dinâmica', '점성계수'), units: [
+            u(1, 'cP', '센티푸아즈 (cP)'), u(1000, 'Pa·s', '파스칼초 (Pa·s)'), u(100, 'P', '푸아즈 (P)')] },
+
+        { id: 'volumen', n: N('Volumen', 'Volume', 'Volume', 'Volume', '부피'), o: 7, d: 12, units: [
+            /* Sistema Internacional (base: litro) */
+            u(1e-6, 'mm³', '세제곱밀리미터 (mm³)'), u(1e-3, 'cm³', '세제곱센티미터 (cm³)'), u(1, 'dm³', '세제곱데시미터 (dm³)'), u(1000, 'm³', '세제곱미터 (m³)'),
+            u(1e-3, 'mL', '밀리리터 (mL)'), u(0.01, 'cL', '센티리터 (cL)'), u(0.1, 'dL', '데시리터 (dL)'), u(1, 'L', '리터 (L)'), u(100, 'hL', '헥토리터 (hL)'),
+            /* Sistema imperial / EE. UU. */
+            u(0.016387064, 'in³', '세제곱인치 (in³)'), u(28.316846592, 'ft³', '세제곱피트 (ft³)'), u(764.554857984, 'yd³', '세제곱야드 (yd³)'),
+            u(3.785411784, 'gal (US)'), u(0.946352946, 'qt (US)'), u(0.473176473, 'pt (US)'), u(0.2365882365, 'cup (US)'),
+            u(0.0295735295625, 'fl oz (US)'), u(0.01478676478125, 'tbsp (US)'), u(0.00492892159375, 'tsp (US)'),
+            u(4.54609, 'gal (imp)'), u(1.1365225, 'qt (imp)'), u(0.56826125, 'pt (imp)'), u(0.0284130625, 'fl oz (imp)'),
+            U(158.987294928, N('barril de petróleo (bbl)', 'oil barrel (bbl)', 'barril de petróleo (bbl)', 'barril de petróleo (bbl)', '석유 배럴 (bbl)'))] },
+
+        { id: 'zapatos', type: 'shoes', n: N('Zapatos', 'Shoes', 'Zapatos', 'Sapatos', '신발'),
+          t: N('Medida de zapatos', 'Shoe sizes', 'Medida de zapatos', 'Tamanhos de sapatos', '신발 사이즈') }
     ];
 
-    const codigosDivisas = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "BRL", "MXN"];
+    // Divisas: factor = USD por 1 unidad (se actualiza con tipos reales)
+    const CAT_DIV = CATS.find(c => c.id === 'divisas');
+    CAT_DIV.units = DIVISAS_COD.map((cod, i) => ({ f: 1, n: { es: DIVISAS_NOMBRES.es[i], en: DIVISAS_NOMBRES.en[i], gl: DIVISAS_NOMBRES.gl[i], pt: DIVISAS_NOMBRES.pt[i], ko: DIVISAS_NOMBRES.ko[i] } }));
 
-    let pestañaActiva = 0;
+    const SHOES = [
+        [36, '5 1/2', '', '22 1/2'], [37, '6 - 6 1/2', '', '22 3/4'], [38, '7 - 7 1/2', '', '23 3/4'], [39, '8 - 8 1/2', '6 - 6 1/2', '24 1/2'],
+        [40, '9', '7', '25 1/4'], [41, '9 1/2', '7 1/2 - 8', '25 3/4'], [42, '10 - 10 1/2', '8 1/2', '26 1/4'], [43, '11', '9', '27'],
+        [44, '', '9 1/2 - 10', '27 1/2'], [45, '', '10 1/2 - 11', '28'], [46, '', '11 1/2 - 12', '28 3/4'], [47, '', '12 1/2', '30'],
+        [48, '', '13 - 13 1/2', '30 1/2'], [49, '', '14 - 14 1/2', '31 1/2'], [50, '', '15', '32']
+    ];
 
-    function inicializar() {
-        const idiomaGuardado = localStorage.getItem('idiomaPrefijo');
-        if (idiomaGuardado && traducciones[idiomaGuardado]) {
-            idiomaActual = idiomaGuardado;
+    /* ===================== ESTADO ===================== */
+    let lang = 'es';
+    let activa = CATS[0].id;
+    const byId = {};
+    CATS.forEach(c => byId[c.id] = c);
+
+    /* ===================== CÁLCULO ===================== */
+    function conv(c, v, i, j) {
+        if (c.id === 'temperatura') {
+            let C = i === 0 ? v : i === 1 ? v - 273.15 : i === 2 ? (v - 32) * 5 / 9 : (v - 491.67) * 5 / 9;
+            return j === 0 ? C : j === 1 ? C + 273.15 : j === 2 ? C * 9 / 5 + 32 : (C + 273.15) * 9 / 5;
         }
-
-        poblarSelects();
-        actualizarTextosInterfaz();
-        obtenerTiposDeCambioReales();
-        calcular(5);
-        calcular(7);
+        return v * c.units[i].f / c.units[j].f;
+    }
+    function fmt(x, dec4) {
+        if (!isFinite(x)) return '';
+        return String(Number(dec4 ? x.toFixed(4) : x.toPrecision(10)));
     }
 
-    function poblarSelects() {
-        const t = traducciones[idiomaActual];
-        t.unidades.forEach((catUnidades, index) => {
-            const selOrig = document.getElementById(`selOrig${index}`);
-            const selDest = document.getElementById(`selDest${index}`);
-            if (!selOrig || !selDest) return;
+    function calcular(c) {
+        const v = parseFloat($('val-' + c.id).value);
+        const res = $('res-' + c.id);
+        const grid = $('all-' + c.id);
+        if (isNaN(v)) {
+            res.value = '';
+            Array.from(grid.children).forEach(it => it.lastChild.textContent = '');
+            return;
+        }
+        const o = parseInt($('so-' + c.id).value), d = parseInt($('sd-' + c.id).value);
+        const dec4 = c.id === 'divisas';
+        res.value = fmt(conv(c, v, o, d), dec4);
+        c.units.forEach((_, j) => { grid.children[j].lastChild.textContent = fmt(conv(c, v, o, j), dec4); });
+    }
 
-            const valOrigPrev = selOrig.value;
-            const valDestPrev = selDest.value;
+    /* ===================== CONSTRUCCIÓN DE LA INTERFAZ ===================== */
+    function buildGeneric(c) {
+        const div = document.createElement('div');
+        div.className = 'tab-content';
+        div.id = 'tab-' + c.id;
+        div.innerHTML =
+            '<div class="converter-grid">' +
+              '<div class="form-group"><label data-cat="' + c.id + '" for="val-' + c.id + '"></label>' +
+                '<input type="number" step="any" id="val-' + c.id + '"' + (c.def !== undefined ? ' value="' + c.def + '"' : '') + '>' +
+                '<select id="so-' + c.id + '"></select></div>' +
+              '<div class="form-group"><label data-i="resultado" for="res-' + c.id + '"></label>' +
+                '<input type="text" id="res-' + c.id + '" readonly>' +
+                '<select id="sd-' + c.id + '"></select></div>' +
+            '</div>' +
+            '<details class="all"><summary data-i="todas"></summary><div class="all-grid" id="all-' + c.id + '"></div></details>' +
+            (c.id === 'divisas' ? '<div class="currency-info" id="currencyStatus"></div>' : '');
+        const grid = div.querySelector('.all-grid');
+        c.units.forEach(() => {
+            const it = document.createElement('div');
+            it.className = 'all-item';
+            it.innerHTML = '<span class="n"></span><span class="v"></span>';
+            grid.appendChild(it);
+        });
+        $('tabs').appendChild(div);
+        const fn = () => calcular(c);
+        $('val-' + c.id).addEventListener('input', fn);
+        $('so-' + c.id).addEventListener('change', fn);
+        $('sd-' + c.id).addEventListener('change', fn);
+    }
 
-            selOrig.innerHTML = "";
-            selDest.innerHTML = "";
+    function poblarSelects(c) {
+        ['so-', 'sd-'].forEach((pref, k) => {
+            const sel = $(pref + c.id);
+            const prev = sel.options.length ? sel.selectedIndex : -1;
+            sel.innerHTML = '';
+            c.units.forEach((un, idx) => sel.add(new Option(nm(un.n, lang), idx)));
+            if (prev >= 0) sel.selectedIndex = prev;
+            else sel.selectedIndex = k === 0 ? (c.o !== undefined ? c.o : 0) : (c.d !== undefined ? c.d : 1);
+        });
+        const grid = $('all-' + c.id);
+        c.units.forEach((un, j) => { grid.children[j].firstChild.textContent = nm(un.n, lang); });
+    }
 
-            catUnidades.forEach((uni, idx) => {
-                selOrig.add(new Option(uni, idx));
-                selDest.add(new Option(uni, idx));
-            });
+    /* ---------- Pulgadas / pies ---------- */
+    function gcd(a, b) { while (b) { const t = b; b = a % b; a = t; } return a; }
 
-            if (valOrigPrev !== "" && valOrigPrev < catUnidades.length) {
-                selOrig.selectedIndex = valOrigPrev;
-            } else if (index === 7) {
-                selOrig.selectedIndex = 0;
-            }
+    function buildImp(c) {
+        const id = c.id, feet = c.feet;
+        const precs = [['dec']].concat(feet ? [[1]] : []).concat([[2], [4], [8], [16], [32], [64]]);
+        const radios = precs.map(p => {
+            const v = p[0];
+            const lab = v === 'dec' ? '<span data-i="decimales"></span>' : v === 1 ? '<span data-i="pulgada"></span>' : '<span>1/' + v + ' "</span>';
+            return '<label><input type="radio" name="prec-' + id + '" value="' + v + '"' + (v === 64 ? ' checked' : '') + '>' + lab + '</label>';
+        }).join('');
+        const div = document.createElement('div');
+        div.className = 'tab-content';
+        div.id = 'tab-' + id;
+        div.innerHTML =
+            '<fieldset class="adjust"><legend data-i="ajustar"></legend><div class="radios">' + radios + '</div></fieldset>' +
+            '<div class="imp-grid">' +
+              '<div class="box"><h3 data-i="' + (feet ? 'pies' : 'pulgadas') + '"></h3>' +
+                '<div class="imp-fields">' +
+                  (feet ? '<div class="fg"><label for="ft-' + id + '" data-i="pies"></label><input type="number" step="any" min="0" id="ft-' + id + '" placeholder="0"></div>' : '') +
+                  '<div class="fg"><label for="wh-' + id + '" data-i="' + (feet ? 'pulgadas' : 'parteEntera') + '"></label><input type="number" step="any" min="0" id="wh-' + id + '" placeholder="0"></div>' +
+                  '<div class="fg"><label data-i="fraccion"></label><div class="frac"><input type="number" step="any" min="0" id="nu-' + id + '" placeholder="0" aria-label="num"><div class="bar"></div><input type="number" step="any" min="1" id="de-' + id + '" placeholder="1" aria-label="den"></div></div>' +
+                '</div>' +
+                '<div class="nav"><button type="button" class="btn btn-secondary" id="prev-' + id + '">◀ <span data-i="ant"></span></button><button type="button" class="btn btn-secondary" id="next-' + id + '"><span data-i="sig"></span> ▶</button></div>' +
+              '</div>' +
+              '<div class="box"><h3 data-i="' + (feet ? 'centimetros' : 'milimetros') + '"></h3>' +
+                '<input type="number" step="any" min="0" id="out-' + id + '" placeholder="0" style="width:100%">' +
+                (feet ? '<div class="radios out-units"><label><input type="radio" name="ou-' + id + '" value="1000">m</label><label><input type="radio" name="ou-' + id + '" value="10" checked>cm</label><label><input type="radio" name="ou-' + id + '" value="1">mm</label></div>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="note" id="note-' + id + '"></div>';
+        $('tabs').appendChild(div);
 
-            if (valDestPrev !== "" && valDestPrev < catUnidades.length) {
-                selDest.selectedIndex = valDestPrev;
-            } else if (index === 7) {
-                selDest.selectedIndex = 1;
+        const st = { N: 64, div: feet ? 10 : 1 };   // N=0 -> decimales; div: mm por unidad de salida
+        const g = k => $(k + '-' + id);
+
+        function readFields() {
+            const keys = feet ? ['ft', 'wh', 'nu', 'de'] : ['wh', 'nu', 'de'];
+            if (keys.every(k => g(k).value === '')) return null;
+            const ft = feet ? (parseFloat(g('ft').value) || 0) : 0;
+            const wh = parseFloat(g('wh').value) || 0;
+            const nu = parseFloat(g('nu').value) || 0;
+            let de = parseFloat(g('de').value) || 1;
+            if (de === 0) de = 1;
+            return ft * 12 + wh + nu / de;
+        }
+        function writeFields(inches) {
+            inches = Math.max(0, inches);
+            let ft = 0, wh, nu = 0, de = 1;
+            if (st.N === 0) {
+                if (feet) { ft = Math.floor(inches / 12 + 1e-12); wh = inches - ft * 12; } else wh = inches;
+                wh = Number(wh.toPrecision(10));
+                if (feet && wh >= 12) { ft++; wh -= 12; }
             } else {
-                if (selDest.options.length > 1) selDest.selectedIndex = 1;
+                const Nn = st.N, Un = Math.round(inches * Nn + 1e-9), per = 12 * Nn;
+                if (feet) ft = Math.floor(Un / per);
+                const r = Un - (feet ? ft * per : 0);
+                wh = Math.floor(r / Nn);
+                nu = r - wh * Nn;
+                if (nu) { const gg = gcd(nu, Nn); nu /= gg; de = Nn / gg; }
             }
-        });
-    }
-
-    async function obtenerTiposDeCambioReales() {
-        try {
-            const response = await fetch('https://open.er-api.com/v6/latest/USD');
-            const data = await response.json();
-            if (data && data.rates) {
-                factoresComunes[7] = codigosDivisas.map(code => 1 / data.rates[code]);
-                const msg = idiomaActual === 'ko' ? "실시간 환율 업데이트 완료 (" : "Tipos de cambio actualizados en tiempo real (";
-                document.getElementById("currencyStatus").innerText = msg + data.time_last_update_utc.substring(0, 16) + ")";
-                calcular(7);
-            }
-        } catch (error) {
-            const msg = idiomaActual === 'ko' ? "알림: 네트워크 오류로 인해 기본 환율을 사용합니다." : "Aviso: Usando valores de cambio predeterminados por error de red.";
-            document.getElementById("currencyStatus").innerText = msg;
+            if (feet) g('ft').value = ft;
+            g('wh').value = wh;
+            g('nu').value = nu;
+            g('de').value = de;
         }
+        function setOut(inches) { g('out').value = inches === null ? '' : fmt(inches * 25.4 / st.div); }
+        function updateNote(exactInches) {
+            const lab = st.N === 0 ? UI[lang].decimales : (st.N === 1 ? '1"' : '1/' + st.N + '"');
+            let txt = UI[lang].precision + ' ' + lab;
+            if (exactInches !== null && st.N !== 0) {
+                const r = readFields();
+                if (r !== null) {
+                    const err = (r - exactInches) * 25.4;
+                    if (Math.abs(err) > 1e-9) txt += '  ·  ' + UI[lang].ajuste + ' ' + (err > 0 ? '+' : '') + fmt(err) + ' mm';
+                }
+            }
+            g('note').innerHTML = txt + '<br>' + UI[lang].nota;
+        }
+        function onFields() {
+            const inches = readFields();
+            setOut(inches);
+            updateNote(null);
+        }
+        function onOut() {
+            const v = parseFloat(g('out').value);
+            if (isNaN(v)) { ['ft', 'wh', 'nu', 'de'].forEach(k => { if (g(k)) g(k).value = ''; }); updateNote(null); return; }
+            const inches = v * st.div / 25.4;
+            writeFields(inches);
+            updateNote(inches);
+        }
+        function step(dir) {
+            const base = readFields() || 0;
+            const inches = st.N === 0 ? base + dir * 0.01 : (Math.round(base * st.N) + dir) / st.N;
+            writeFields(inches);
+            setOut(readFields());
+            updateNote(null);
+        }
+        function refit() {
+            let inches;
+            const v = parseFloat(g('out').value);
+            if (!isNaN(v)) inches = v * st.div / 25.4; else inches = readFields();
+            if (inches === null) { updateNote(null); return; }
+            writeFields(inches);
+            updateNote(inches);
+        }
+
+        ['ft', 'wh', 'nu', 'de'].forEach(k => { if (g(k)) g(k).addEventListener('input', onFields); });
+        g('out').addEventListener('input', onOut);
+        g('prev').addEventListener('click', () => step(-1));
+        g('next').addEventListener('click', () => step(1));
+        div.querySelectorAll('input[name="prec-' + id + '"]').forEach(r => r.addEventListener('change', () => {
+            st.N = r.value === 'dec' ? 0 : parseInt(r.value);
+            refit();
+        }));
+        div.querySelectorAll('input[name="ou-' + id + '"]').forEach(r => r.addEventListener('change', () => {
+            const cur = readFields();
+            st.div = parseInt(r.value);
+            if (cur !== null) setOut(cur);
+        }));
+        c.imp = {
+            clear() { ['ft', 'wh', 'nu', 'de', 'out'].forEach(k => { if (g(k)) g(k).value = ''; }); updateNote(null); g(feet ? 'ft' : 'wh').focus(); },
+            note() { updateNote(null); }
+        };
     }
 
-    function cambiarIdioma(lang) {
-        idiomaActual = lang;
-        localStorage.setItem('idiomaPrefijo', lang);
+    /* ---------- Zapatos ---------- */
+    function fracTxt(s) { return s ? s.replace(/ 1\/2/g, '½').replace(/ 1\/4/g, '¼').replace(/ 3\/4/g, '¾').replace(/ - /g, ' – ') : '–'; }
+    function buildShoes(c) {
+        const div = document.createElement('div');
+        div.className = 'tab-content';
+        div.id = 'tab-' + c.id;
+        const rows = SHOES.map(r => '<tr><th>' + r[0] + '</th><td>' + fracTxt(r[1]) + '</td><td>' + fracTxt(r[2]) + '</td><td>' + fracTxt(r[3]) + '</td></tr>').join('');
+        div.innerHTML = '<div class="shoe-wrap"><table class="shoes"><thead><tr><th data-i="zEU"></th><th data-i="zMuj"></th><th data-i="zHom"></th><th data-i="zCm"></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+        $('tabs').appendChild(div);
+        div.querySelectorAll('tbody tr').forEach(tr => tr.addEventListener('click', () => {
+            const was = tr.classList.contains('sel');
+            div.querySelectorAll('tr.sel').forEach(x => x.classList.remove('sel'));
+            if (!was) tr.classList.add('sel');
+        }));
+    }
 
-        document.querySelectorAll(".lang-btn").forEach(btn => {
-            btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${lang}'`));
+    /* ---------- Menú ---------- */
+    function buildMenus() {
+        const side = $('sidebarMenu'), sel = $('catSelect');
+        CATS.forEach(c => {
+            const b = document.createElement('button');
+            b.className = 'sidebar-btn' + (c.sub ? ' sub' : '');
+            b.dataset.id = c.id;
+            b.addEventListener('click', () => switchTab(c.id));
+            side.appendChild(b);
+            sel.add(new Option('', c.id));
         });
+        sel.addEventListener('change', () => switchTab(sel.value));
+    }
 
-        poblarSelects();
-        actualizarTextosInterfaz();
-        calcular(pestañaActiva);
+    /* ===================== IDIOMA / TEMA / CABECERA ===================== */
+    function actualizarCabecera() {
+        const c = byId[activa], t = UI[lang];
+        let txt;
+        if (c.t) txt = c.t[lang];
+        else if (lang === 'ko') txt = nm(c.n, lang) + ' ' + t.titulo;
+        else txt = t.titulo + ' ' + nm(c.n, lang).toLowerCase();
+        $('headerTitle').textContent = txt;
+        document.title = txt;
+    }
+
+    function actualizarTextos() {
+        const t = UI[lang];
+        document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'pt' ? 'pt-BR' : lang === 'gl' ? 'gl' : lang;
+        document.querySelectorAll('[data-i]').forEach(el => { el.textContent = t[el.dataset.i]; });
+        document.querySelectorAll('[data-cat]').forEach(el => { el.textContent = nm(byId[el.dataset.cat].n, lang); });
+        document.querySelectorAll('.sidebar-btn').forEach(b => { b.textContent = nm(byId[b.dataset.id].n, lang); });
+        Array.from($('catSelect').options).forEach(o => { const c = byId[o.value]; o.textContent = (c.sub ? '↳ ' : '') + nm(c.n, lang); });
+        $('catSelect').setAttribute('aria-label', t.categoria);
+        $('btnClear').textContent = t.limpiar;
+        $('btnClose').textContent = t.cerrar;
+        $('optLight').textContent = t.claro;
+        $('optMedium').textContent = t.medio;
+        $('optDark').textContent = t.oscuro;
+        actualizarCabecera();
+        actualizarEstadoDivisas();
+        CATS.forEach(c => { if (c.imp) c.imp.note(); });
+    }
+
+    function cambiarIdioma(l) {
+        lang = l;
+        LS.set('idiomaPrefijo', l);
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+        CATS.forEach(c => { if (c.units) poblarSelects(c); });
+        actualizarTextos();
+        CATS.forEach(c => { if (c.units) calcular(c); });
     }
 
     function cambiarTema() {
-        const tema = document.getElementById("themeSelect").value;
-        if (tema === "light") {
-            document.documentElement.removeAttribute("data-theme");
-        } else {
-            document.documentElement.setAttribute("data-theme", tema);
-        }
+        const tema = $('themeSelect').value;
+        if (tema === 'light') document.documentElement.removeAttribute('data-theme');
+        else document.documentElement.setAttribute('data-theme', tema);
+        LS.set('temaConversor', tema);
+        const pc = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+        $('metaTheme').setAttribute('content', pc || '#1e3a8a');
     }
 
-    function cerrarVentana() {
-        window.close();
-    }
-
-    function actualizarTextosInterfaz() {
-        const t = traducciones[idiomaActual];
-        const botones = document.querySelectorAll(".sidebar-btn");
-        botones.forEach((btn, idx) => {
-            btn.innerText = t.categorias[idx];
-            const lblInput = document.getElementById(`lblInput${idx}`);
-            if (lblInput) {
-                lblInput.innerText = t.categorias[idx];
-            }
-        });
-        actualizarCabecera(pestañaActiva);
-        document.getElementById("btnClear").innerText = t.limpiar;
-        document.getElementById("btnClose").innerText = t.cerrar;
-        
-        document.getElementById("optLight").innerText = idiomaActual === 'ko' ? '밝게' : 'Claro';
-        document.getElementById("optMedium").innerText = idiomaActual === 'ko' ? '중간' : 'Medio';
-        document.getElementById("optDark").innerText = idiomaActual === 'ko' ? '어둡게' : (idiomaActual === 'pt' ? 'Escuro' : (idiomaActual === 'gl' ? 'Escuro' : 'Oscuro'));
-    }
-
-    function actualizarCabecera(index) {
-        const t = traducciones[idiomaActual];
-        if (idiomaActual === 'ko') {
-            document.getElementById("headerTitle").innerText = `${t.categorias[index]} ${t.tituloPrefijo}`;
-        } else {
-            document.getElementById("headerTitle").innerText = `${t.tituloPrefijo} ${t.categorias[index].toLowerCase()}`;
-        }
-    }
-
-    function switchTab(index) {
-        pestañaActiva = index;
-        document.querySelectorAll(".sidebar-btn").forEach((btn, idx) => btn.classList.toggle("active", idx === index));
-        document.querySelectorAll(".tab-content").forEach((content, idx) => content.classList.toggle("active", idx === index));
-        actualizarCabecera(index);
-    }
-
-    function calcular(catIndex) {
-        const valInput = document.getElementById(`val${catIndex}`);
-        const resInput = document.getElementById(`res${catIndex}`);
-        const origSelect = document.getElementById(`selOrig${catIndex}`);
-        const destSelect = document.getElementById(`selDest${catIndex}`);
-
-        const val = parseFloat(valInput.value);
-        if (isNaN(val)) {
-            resInput.value = "";
-            return;
-        }
-
-        const origen = parseInt(origSelect.value);
-        const destino = parseInt(destSelect.value);
-        let resultado = 0;
-
-        if (catIndex === 17) {
-            let enC = val;
-            if (origen === 1) enC = val - 273.15;
-            else if (origen === 2) enC = (val - 32) * 5 / 9;
-            else if (origen === 3) enC = (val - 491.67) * 5 / 9;
-
-            if (destino === 0) resultado = enC;
-            else if (destino === 1) resultado = enC + 273.15;
-            else if (destino === 2) resultado = (enC * 9 / 5) + 32;
-            else if (destino === 3) resultado = (enC + 273.15) * 9 / 5;
-        } else {
-            const factores = factoresComunes[catIndex];
-            const enBase = val * factores[origen];
-            resultado = enBase / factores[destino];
-        }
-
-        resInput.value = Number(resultado.toFixed(catIndex === 7 ? 4 : 6));
+    function switchTab(id) {
+        activa = id;
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.toggle('active', t.id === 'tab-' + id));
+        $('catSelect').value = id;
+        $('footerActions').style.display = byId[id].type === 'shoes' ? 'none' : '';
+        LS.set('ultimaCat', id);
+        actualizarCabecera();
+        const act = document.querySelector('.sidebar-btn.active');
+        if (act && act.scrollIntoView) act.scrollIntoView({ block: 'nearest' });
     }
 
     function limpiar() {
-        document.getElementById(`val${pestañaActiva}`).value = "";
-        document.getElementById(`res${pestañaActiva}`).value = "";
-        document.getElementById(`val${pestañaActiva}`).focus();
+        const c = byId[activa];
+        if (c.type === 'imp') { c.imp.clear(); return; }
+        if (c.type === 'shoes') return;
+        $('val-' + c.id).value = '';
+        calcular(c);
+        $('val-' + c.id).focus();
     }
 
-    window.onload = inicializar;
+    /* ===================== DIVISAS ===================== */
+    let estadoDivisas = 'def', fechaDivisas = '';
+    function aplicarTasas(r) {
+        CAT_DIV.units.forEach((un, i) => { un.f = 1 / r[DIVISAS_COD[i]]; });
+    }
+    function actualizarEstadoDivisas() {
+        const el = $('currencyStatus');
+        if (!el) return;
+        const t = UI[lang];
+        if (estadoDivisas === 'live') el.textContent = t.cambioOk + fechaDivisas + ')';
+        else if (estadoDivisas === 'cache') el.textContent = t.cambioCache + fechaDivisas + ')';
+        else el.textContent = t.cambioDef;
+    }
+    async function obtenerTiposDeCambio() {
+        aplicarTasas(DIVISAS_FALLBACK);
+        try {
+            const cache = JSON.parse(LS.get('divisasCache') || 'null');
+            if (cache && cache.rates && DIVISAS_COD.every(k => cache.rates[k] > 0)) {
+                aplicarTasas(cache.rates); estadoDivisas = 'cache'; fechaDivisas = cache.fecha || '';
+            }
+        } catch (e) { }
+        actualizarEstadoDivisas(); calcular(CAT_DIV);
+        try {
+            const resp = await fetch('https://open.er-api.com/v6/latest/USD');
+            const data = await resp.json();
+            if (data && data.rates && DIVISAS_COD.every(k => data.rates[k] > 0)) {
+                aplicarTasas(data.rates);
+                estadoDivisas = 'live';
+                fechaDivisas = (data.time_last_update_utc || '').substring(0, 16);
+                const r = {}; DIVISAS_COD.forEach(k => r[k] = data.rates[k]);
+                LS.set('divisasCache', JSON.stringify({ rates: r, fecha: fechaDivisas }));
+            }
+        } catch (e) { /* se mantiene caché o valores aproximados */ }
+        actualizarEstadoDivisas(); calcular(CAT_DIV);
+    }
+
+    /* ===================== INICIO ===================== */
+    function inicializar() {
+        buildMenus();
+        CATS.forEach(c => {
+            if (c.type === 'imp') buildImp(c);
+            else if (c.type === 'shoes') buildShoes(c);
+            else buildGeneric(c);
+        });
+
+        document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => cambiarIdioma(b.dataset.lang)));
+        $('themeSelect').addEventListener('change', cambiarTema);
+        $('btnClear').addEventListener('click', limpiar);
+        $('btnClose').addEventListener('click', () => window.close());
+
+        const idiomaGuardado = LS.get('idiomaPrefijo');
+        if (idiomaGuardado && UI[idiomaGuardado]) lang = idiomaGuardado;
+        const temaGuardado = LS.get('temaConversor');
+        if (temaGuardado === 'medium' || temaGuardado === 'dark') $('themeSelect').value = temaGuardado;
+        cambiarTema();
+
+        const ultima = LS.get('ultimaCat');
+        if (ultima && byId[ultima]) activa = ultima;
+
+        CATS.forEach(c => { if (c.units) poblarSelects(c); });
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        actualizarTextos();
+        switchTab(activa);
+        CATS.forEach(c => { if (c.units) calcular(c); });
+        obtenerTiposDeCambio();
+
+        if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+            navigator.serviceWorker.register('sw.js').catch(() => { });
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', inicializar);
+})();
 </script>
 
 </body>
